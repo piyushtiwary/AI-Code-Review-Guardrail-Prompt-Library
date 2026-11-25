@@ -1,0 +1,24 @@
+# serializer version: 1
+# name: test_reroute_scaffold
+  '''
+  import pytest
+  
+  
+  def test_a_shipment_has_breached_its_sla():
+      # Arrange: the shipment has passed its promised delivery time
+      # Arrange: an alternate carrier has capacity
+      # Act: the dispatcher requests a reroute
+      # Act: confirms the alternate carrier
+      # Assert: the shipment is assigned to the alternate carrier
+      # Assert: the customer receives a revised delivery time
+      pytest.fail("TODO: implement this scenario")
+  
+  
+  def test_a_shipment_is_on_time():
+      # Arrange: the shipment is within its promised delivery window
+      # Act: the dispatcher requests a reroute
+      # Assert: the shipment stays on its original route
+      pytest.fail("TODO: implement this scenario")
+  
+  '''
+# ---

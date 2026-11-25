@@ -1,0 +1,23 @@
+name: Guardrail PR review
+on: pull_request
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: guardrail-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the trusted action from the base commit
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+      - uses: ./
+        with:
+          comment: 'true'

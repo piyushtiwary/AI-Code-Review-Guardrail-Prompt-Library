@@ -175,8 +175,12 @@ def parse_patch(text: str) -> tuple[FileChange, ...]:
         return ()
     try:
         files = PatchSet(lines)
-    except (UnidiffParseError, ValueError) as exc:
-        raise PatchInputError(f"Malformed patch: {exc}") from exc
+    except UnidiffParseError as exc:
+        # unidiff appends the rejected raw patch line to some diagnostics.
+        reason = str(exc).partition(":")[0]
+        raise PatchInputError(f"Malformed patch: {reason}") from None
+    except ValueError:
+        raise PatchInputError("Malformed patch: invalid hunk data") from None
     # For a plain unified diff, unidiff creates the file on the +++ header.
     starts = []
     for file in files:

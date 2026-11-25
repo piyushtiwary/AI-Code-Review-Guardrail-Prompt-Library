@@ -1,0 +1,7 @@
+Changed files: 2 | Added lines: 15
+Whole-file source available: 3 Python file(s).
+quantities.py:1  WARNING  imports
+  Local module 'defaults' has no name 'DEFAULT_COUNT'.
+quantities.py:7  WARNING  exception-handling
+  Broad exception handler silently passes.
+  Suggestion: Catch the expected exceptions or re-raise unexpected errors.

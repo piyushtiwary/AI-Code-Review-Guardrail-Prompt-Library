@@ -2,12 +2,17 @@
 
 import os
 import subprocess
+from collections.abc import Iterator
 from dataclasses import dataclass
+from functools import cached_property
 from hashlib import sha1, sha256
 from io import BytesIO
 from pathlib import Path
 
+from unidiff import Hunk
+
 from guardrail.patch import FileChange, parse_patch, read_patch
+from guardrail.secrets import SecretRedactor
 
 
 class SourceError(ValueError):
@@ -19,6 +24,30 @@ class ReviewSource:
     changes: tuple[FileChange, ...]
     python_files: dict[str, bytes]
     skipped_reason: str | None = None
+
+    @cached_property
+    def redactor(self) -> SecretRedactor:
+        return SecretRedactor(self.changes)
+
+    def prepare_model_hunk(self, path: str, hunk: Hunk) -> str:
+        """Prepare a located, redacted excerpt for a model without sending it."""
+        return self.redactor.redact(
+            f"{path}\n{hunk}", bare_assignments=not path.endswith(".py")
+        )
+
+    def changed_python_lines(self) -> Iterator[tuple[str, set[int]]]:
+        """Yield source-backed Python files with nonblank, noncomment additions."""
+        for change in self.changes:
+            path = change.new_path
+            if path not in self.python_files or change.is_binary:
+                continue
+            added = {
+                line.target_line_no
+                for line in change.added_lines
+                if line.value.strip() and not line.value.lstrip().startswith("#")
+            }
+            if added:
+                yield path, added
 
 
 def _git(directory: Path, *args: str, stdin: bytes | None = None) -> bytes:

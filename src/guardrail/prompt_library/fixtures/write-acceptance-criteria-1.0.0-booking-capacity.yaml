@@ -1,0 +1,19 @@
+inputs:
+  title: Book available seats
+  requirements: |
+    Exact capacity: With two seats available, requesting two seats confirms the booking.
+    Over capacity: With two seats available, requesting three seats declines the booking.
+expected:
+  scenarios: [Exact capacity, Over capacity]
+reference_output: |
+  Story: Book available seats
+
+  Scenario: Exact capacity
+    Given two seats are available
+    When the customer requests two seats
+    Then the booking is confirmed
+
+  Scenario: Over capacity
+    Given two seats are available
+    When the customer requests three seats
+    Then the booking is declined

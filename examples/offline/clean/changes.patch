@@ -1,0 +1,24 @@
+diff --git a/quantities.py b/quantities.py
+new file mode 100644
+--- /dev/null
++++ b/quantities.py
+@@ -0,0 +1,8 @@
++from defaults import DEFAULT_QUANTITY
++
++
++def parse_quantity(text):
++    try:
++        return int(text)
++    except ValueError:
++        return DEFAULT_QUANTITY
+diff --git a/tests/test_quantities.py b/tests/test_quantities.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_quantities.py
+@@ -0,0 +1,6 @@
++from quantities import parse_quantity
++
++
++def test_parse_quantity():
++    assert parse_quantity("12") == 12
++    assert parse_quantity("unknown") == 1

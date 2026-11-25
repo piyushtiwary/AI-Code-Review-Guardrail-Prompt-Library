@@ -1,0 +1,32 @@
+id: write-acceptance-criteria
+version: "1.0.0"
+purpose: Express a story's requested behavior as observable Given/When/Then scenarios.
+inputs:
+  title: Title for the story heading.
+  requirements: Named cases describing preconditions, actions and observable outcomes.
+template: |
+  Write acceptance criteria in plain text. Start with "Story: " and the supplied
+  title. For each requested case, in order, write "Scenario: " and its supplied
+  name. On separate lines write Given for the starting state, When for the action,
+  and Then for an observable outcome. Use And to extend the preceding step.
+  Preserve the stated boundary conditions and outcomes. Use only the requirements
+  below and omit Markdown fences and commentary.
+
+  Title:
+  {{ title }}
+
+  Requirements:
+  {{ requirements }}
+examples:
+  booking-capacity: write-acceptance-criteria-1.0.0-booking-capacity.yaml
+expected_output_properties:
+  - A story heading followed by each requested scenario name in input order.
+  - Each scenario has a condition, an action and a verifiable outcome in Given/When/Then order.
+known_failure_modes:
+  - Combining success and failure into one scenario drops a distinct outcome.
+  - Substituting an internal implementation detail makes the outcome hard to observe.
+evaluation_history:
+  - example: booking-capacity
+    mode: offline
+    passed: true
+    reason: matched 2 ordered scenarios with Given/When/Then clauses

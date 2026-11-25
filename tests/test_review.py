@@ -117,6 +117,7 @@ def test_patch_only_skips_whole_file_checks(review):
         {"file": "dir/../file.py"},
         {"file": ""},
         {"line": 0},
+        {"line": None},
         {"line": True},
         {"severity": "unknown"},
         {"check": " "},

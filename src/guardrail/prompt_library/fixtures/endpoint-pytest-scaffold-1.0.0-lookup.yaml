@@ -1,0 +1,23 @@
+inputs:
+  endpoint: GET /bookings/{id} returns 200 with the booking or 404 for an unknown ID.
+  cases: |
+    Existing booking: request booking 42 and receive its details.
+    Unknown booking: request absent booking 99 and receive 404.
+expected:
+  responses: {"42": 200, "99": 404}
+reference_output: |
+  import pytest
+
+
+  def test_existing_booking():
+      # Arrange: Store booking 42.
+      # Act: GET /bookings/42.
+      # Assert: Expect status 200 and booking 42 in the response.
+      pytest.fail("TODO: implement this scenario")
+
+
+  def test_unknown_booking():
+      # Arrange: Ensure booking 99 is absent.
+      # Act: GET /bookings/99.
+      # Assert: Expect status 404.
+      pytest.fail("TODO: implement this scenario")

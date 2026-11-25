@@ -1,0 +1,22 @@
+inputs:
+  hunks: |
+    booking.py
+    @@ -8,3 +8,3 @@
+     def can_book(requested, available):
+         """Allow a booking up to and including the number of available seats."""
+    -    return 0 < requested <= available
+    +    return 0 < requested < available
+expected:
+  anchors:
+    - {file: booking.py, line: 10}
+reference_output: |
+  [
+    {
+      "check": "diff-edge-case-review",
+      "file": "booking.py",
+      "line": 10,
+      "severity": "warning",
+      "message": "A request for the last available seat (1 requested, 1 available) is rejected.",
+      "suggestion": "Use an inclusive upper bound for available seats."
+    }
+  ]

@@ -1,0 +1,16 @@
+import pytest
+{% for name, scenario in cases %}
+
+
+def {{ name }}():
+{% for condition in scenario.conditions %}
+    # Arrange: {{ condition }}
+{% endfor %}
+{% for action in scenario.actions %}
+    # Act: {{ action }}
+{% endfor %}
+{% for outcome in scenario.outcomes %}
+    # Assert: {{ outcome }}
+{% endfor %}
+    pytest.fail("TODO: implement this scenario")
+{% endfor %}

@@ -93,19 +93,21 @@ def test_cli_reports_source_availability(history, tmp_path, monkeypatch):
     runner = CliRunner()
     for args in (["--base", "base", "--head", "feature"], ["--diff", str(patch)]):
         result = runner.invoke(app, ["review", *args])
-        assert result.exit_code == 0, result.output
+        assert result.exit_code == 1, result.output
+        assert "module.py:10  WARNING  no-test-changes" in result.output
         assert "Changed files: 2 | Added lines: 2" in result.output
         assert "3 Python file(s)" in result.output
 
     monkeypatch.chdir(tmp_path)
     for args in ([], ["--patch-only"]):
         result = runner.invoke(app, ["review", "--diff", str(patch), *args])
-        assert result.exit_code == 0
+        assert result.exit_code == 1
+        assert "module.py:10  WARNING  no-test-changes" in result.output
         assert "Whole-file checks skipped" in result.output
     explicit = runner.invoke(
         app, ["review", "--diff", str(patch), "--source-root", str(repo)]
     )
-    assert explicit.exit_code == 0
+    assert explicit.exit_code == 1
     assert "3 Python file(s)" in explicit.output
 
     monkeypatch.chdir(repo)

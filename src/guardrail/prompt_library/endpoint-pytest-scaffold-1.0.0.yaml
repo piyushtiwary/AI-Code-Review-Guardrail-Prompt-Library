@@ -1,0 +1,32 @@
+id: endpoint-pytest-scaffold
+version: "1.0.0"
+purpose: Turn a documented endpoint and its cases into a collectable pytest scaffold.
+inputs:
+  endpoint: HTTP method, path and documented response behavior.
+  cases: Named request scenarios with observable outcomes.
+template: |
+  Write a Python pytest module for the endpoint below. Emit only Python source.
+  Import pytest and define one uniquely named, parameterless test_ function per case.
+  In each test use Arrange, Act and Assert comments to specify its precondition,
+  request and expected response. Use only the supplied endpoint contract and cases.
+  End each test with pytest.fail("TODO: implement this scenario") so unfinished
+  tests fail visibly. Keep the module collectable without a running service.
+
+  Endpoint:
+  {{ endpoint }}
+
+  Cases:
+  {{ cases }}
+examples:
+  lookup: endpoint-pytest-scaffold-1.0.0-lookup.yaml
+expected_output_properties:
+  - Valid Python source with one collectable pytest function per named case.
+  - Each test preserves its expected HTTP response and ends in an explicit pytest.fail TODO.
+known_failure_modes:
+  - Inventing a client fixture causes setup to fail before the TODO.
+  - Reusing a function name hides an earlier case during collection.
+evaluation_history:
+  - example: lookup
+    mode: offline
+    passed: true
+    reason: matched 2 test functions, HTTP responses and terminal TODOs

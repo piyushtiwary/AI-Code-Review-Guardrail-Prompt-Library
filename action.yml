@@ -1,0 +1,38 @@
+name: Guardrail PR review
+description: Review the Python changes between a pull request's base and head.
+inputs:
+  fail-on:
+    description: Minimum severity that fails the job (blocking or warning).
+    default: blocking
+  use-llm:
+    description: Enable optional model review on same-repository pull requests.
+    default: 'false'
+  comment:
+    description: Publish or refresh the Guardrail summary using the workflow token.
+    default: 'false'
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+      with:
+        python-version: '3.12'
+    - name: Install Guardrail from the action revision
+      shell: bash
+      working-directory: ${{ runner.temp }}
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        INSTALL_MODEL: ${{ inputs.use-llm == 'true' && github.event.pull_request.head.repo.full_name == github.repository }}
+      run: |
+        package="$ACTION_PATH"
+        if [[ "$INSTALL_MODEL" == "true" ]]; then package+="[model]"; fi
+        python -I -m pip install --disable-pip-version-check "$package"
+    - name: Review PR commits
+      shell: bash
+      working-directory: ${{ runner.temp }}
+      env:
+        ACTION_PATH: ${{ github.action_path }}
+        GITHUB_TOKEN: ${{ github.token }}
+        FAIL_ON: ${{ inputs.fail-on }}
+        USE_LLM: ${{ inputs.use-llm }}
+        COMMENT: ${{ inputs.comment }}
+      run: python -I "$ACTION_PATH/scripts/review_pr.py"

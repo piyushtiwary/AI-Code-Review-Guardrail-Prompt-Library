@@ -1,13 +1,25 @@
 """Common contract for review checks and completed-review exit statuses."""
 
+import warnings
 from collections.abc import Iterable, Mapping
 from enum import StrEnum
 from pathlib import PureWindowsPath
 from typing import Annotated, Protocol
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    ValidationInfo,
+    field_validator,
+)
 
+from guardrail.exceptions import ExceptionHandlingCheck
+from guardrail.imports import ImportCheck
+from guardrail.secrets import SecretCheck, SecretRedactor
 from guardrail.source import ReviewSource
+from guardrail.testing import FunctionTestReferenceCheck, NoTestChangesCheck
 
 
 class Severity(StrEnum):
@@ -34,10 +46,29 @@ class Finding(BaseModel):
 
     check: NonBlank
     file: str
-    line: Annotated[int, Field(strict=True, gt=0)]
+    line: Annotated[int, Field(strict=True, gt=0)] | None
     severity: Severity
     message: NonBlank
     suggestion: NonBlank | None = None
+
+    @field_validator("line")
+    @classmethod
+    def require_line_anchor(cls, value: int | None, info: ValidationInfo) -> int | None:
+        if value is None and info.data.get("check") != NoTestChangesCheck.name:
+            raise ValueError("expected a new-file line for this check")
+        return value
+
+    def redacted(self, redactor: SecretRedactor) -> "Finding":
+        return self.model_copy(
+            update={
+                "file": redactor.redact(self.file),
+                "check": redactor.redact(self.check),
+                "message": redactor.redact(self.message),
+                "suggestion": redactor.redact(self.suggestion)
+                if self.suggestion
+                else None,
+            }
+        )
 
     @field_validator("file")
     @classmethod
@@ -61,7 +92,13 @@ class Check(Protocol):
     def run(self, source: ReviewSource) -> Iterable[Finding | Mapping[str, object]]: ...
 
 
-DEFAULT_CHECKS: tuple[Check, ...] = ()
+DEFAULT_CHECKS: tuple[Check, ...] = (
+    ImportCheck(),
+    ExceptionHandlingCheck(),
+    SecretCheck(),
+    FunctionTestReferenceCheck(),
+    NoTestChangesCheck(),
+)
 
 
 class CheckError(Exception):
@@ -74,18 +111,25 @@ def run_checks(source: ReviewSource, checks: Iterable[Check]) -> list[Finding]:
         if check.requires_whole_file and source.skipped_reason is not None:
             continue
         try:
-            for item in check.run(source):
-                finding = Finding.model_validate(item)
-                if finding.check != check.name:
-                    raise ValueError(f"expected check name {check.name!r}")
-                findings.append(finding)
-        except Exception as exc:
-            raise CheckError(f"{check.name}: {exc}") from exc
+            # Python's parser can print a raw source line with a syntax warning.
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", SyntaxWarning)
+                for item in check.run(source):
+                    finding = Finding.model_validate(item)
+                    if finding.check != check.name:
+                        raise ValueError(f"expected check name {check.name!r}")
+                    findings.append(finding.redacted(source.redactor))
+        except Exception as exc:  # noqa: BLE001 - check failures may contain raw source
+            raise CheckError(source.redactor.redact(f"{check.name}: {exc}")) from None
+    return sorted_findings(findings)
+
+
+def sorted_findings(findings: Iterable[Finding]) -> list[Finding]:
     return sorted(
         findings,
         key=lambda f: (
             f.file,
-            f.line,
+            f.line or 0,
             f.check,
             f.severity,
             f.message,
