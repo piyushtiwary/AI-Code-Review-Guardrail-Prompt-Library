@@ -1,0 +1,17 @@
+# serializer version: 1
+# name: test_cli_report_order
+  '''
+  Changed files: 2 | Added lines: 3
+  Partial review. Whole-file checks skipped: patch-only review requested
+  a.py:2  WARNING  another
+    Review this line.
+  a.py:2  WARNING  sample
+    Check [bold]literal markup[/bold].
+    Suggestion: Use [value].
+  a.py:10  BLOCKING  sample
+    Review this line.
+  z.py:1  INFO  sample
+    Review this line.
+  
+  '''
+# ---

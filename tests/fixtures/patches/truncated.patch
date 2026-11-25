@@ -1,0 +1,5 @@
+--- a/src/settings.py
++++ b/src/settings.py
+@@ -1 +1,2 @@
+-active = False
++active = True

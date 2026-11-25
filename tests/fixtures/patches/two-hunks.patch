@@ -1,0 +1,14 @@
+--- a/src/settings.py
++++ b/src/settings.py
+@@ -2,3 +2,4 @@
+ first = 1
+-second = 2
++second = 20
++extra = 3
+ third = 4
+@@ -18,3 +19,2 @@
+ before = True
+-obsolete = True
+-active = False
++active = True
+\ No newline at end of file

@@ -1,0 +1,14 @@
+diff --git a/src/new.py b/src/new.py
+new file mode 100644
+--- /dev/null
++++ b/src/new.py
+@@ -0,0 +1,2 @@
++enabled = True
++count = 2
+diff --git a/src/obsolete.py b/src/obsolete.py
+deleted file mode 100644
+--- a/src/obsolete.py
++++ /dev/null
+@@ -1,2 +0,0 @@
+-enabled = False
+-count = 0
