@@ -12,10 +12,8 @@ def invoke(*flags):
     return CliRunner().invoke(cli.app, ["prompts", "eval", *flags])
 
 
-def test_offline_replay_is_repeatable_even_with_credentials(monkeypatch):
-    monkeypatch.setenv("OPENAI_API_KEY", "unused")
-    monkeypatch.setenv("GUARDRAIL_MODEL", "unused")
-    monkeypatch.setattr(cli, "openai_review", lambda *_: pytest.fail("provider called"))
+def test_offline_replay_is_repeatable_without_codex(monkeypatch):
+    monkeypatch.setattr(cli, "codex_review", lambda *_: pytest.fail("provider called"))
     first, second = invoke(), invoke("--offline")
     assert first.exit_code == second.exit_code == 0
     assert first.stdout == second.stdout
@@ -86,8 +84,6 @@ def test_broken_replay_names_fixture_and_exits_nonzero(
 
 
 def test_live_evaluates_provider_responses_and_records_provenance(monkeypatch):
-    monkeypatch.setenv("OPENAI_API_KEY", "unused")
-    monkeypatch.setenv("GUARDRAIL_MODEL", "test-model")
     outputs = {
         entry.prompt.render(fixture.inputs): fixture.reference_output
         for entry in load_prompts().values()
@@ -99,7 +95,7 @@ def test_live_evaluates_provider_responses_and_records_provenance(monkeypatch):
         calls.append(rendered)
         return outputs[rendered] if len(calls) != 1 else "[]"
 
-    monkeypatch.setattr(cli, "openai_review", provider)
+    monkeypatch.setattr(cli, "codex_review", provider)
     result = invoke("--live")
     assert result.exit_code == 1, result.output
     assert calls == list(outputs)
@@ -108,15 +104,13 @@ def test_live_evaluates_provider_responses_and_records_provenance(monkeypatch):
     for r in records:
         assert (r["mode"], r["provider"], r["model"]) == (
             "live",
-            "openai",
-            "test-model",
+            "codex-cli",
+            "gpt-6-sol",
         )
         assert r["evaluated_on"] == datetime.now(UTC).date().isoformat()
 
 
 def test_live_provider_error_is_recorded_and_remaining_examples_run(monkeypatch):
-    monkeypatch.setenv("OPENAI_API_KEY", "unused")
-    monkeypatch.setenv("GUARDRAIL_MODEL", "test-model")
     responses = iter([TimeoutError(), RuntimeError("sensitive request data"), ""])
 
     async def provider(*_):
@@ -125,7 +119,7 @@ def test_live_provider_error_is_recorded_and_remaining_examples_run(monkeypatch)
             raise response
         return response
 
-    monkeypatch.setattr(cli, "openai_review", provider)
+    monkeypatch.setattr(cli, "codex_review", provider)
     result = invoke("--live")
     assert result.exit_code == 3
     records = json.loads(result.stdout)
@@ -135,8 +129,7 @@ def test_live_provider_error_is_recorded_and_remaining_examples_run(monkeypatch)
 
 
 def test_live_requires_configuration(monkeypatch):
-    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    monkeypatch.delenv("GUARDRAIL_MODEL", raising=False)
+    monkeypatch.setenv("GUARDRAIL_CODEX_BIN", "missing")
     result = invoke("--live")
     assert result.exit_code == 3
-    assert "OPENAI_API_KEY and GUARDRAIL_MODEL" in result.output
+    assert "GUARDRAIL_CODEX_BIN" in result.output

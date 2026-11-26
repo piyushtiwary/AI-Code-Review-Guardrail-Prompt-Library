@@ -49,7 +49,7 @@ guardrail benchmark run --out offline-run.json
 guardrail benchmark score offline-run.json --out offline-summary.md
 ```
 
-For a paired run, install the model extra and set `OPENAI_API_KEY` and `GUARDRAIL_MODEL` as described in the [project README](../README.md#optional-model-review). Use a dated model ID when available. Supply the rates applicable to your model and account in USD per million tokens using `--input-rate`, `--cached-input-rate` and `--output-rate`. Rates are optional. Without an applicable rate or token count the report marks cost unavailable.
+For a paired run, use the authenticated local Codex CLI with `gpt-6-sol` and medium reasoning as described in the [project README](../README.md#optional-model-review). Supply the rates applicable to your model and account in USD per million tokens using `--input-rate`, `--cached-input-rate` and `--output-rate`. Rates are optional. Without an applicable rate or token count the report marks cost unavailable.
 
 ```sh
 guardrail benchmark run --live --out paired-run.json

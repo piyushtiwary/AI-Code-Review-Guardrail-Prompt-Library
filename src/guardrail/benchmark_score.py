@@ -6,7 +6,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field, FiniteFloat, NonNegativeFloat
 
-from guardrail.model_review import PROMPT_ID, ResponseUsage
+from guardrail.codex_cli import ResponseUsage
+from guardrail.model_review import PROMPT_ID
 from guardrail.review import Finding
 
 Category = Literal[

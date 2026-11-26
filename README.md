@@ -22,10 +22,10 @@ python3.12 -m venv .venv
 . .venv/bin/activate
 ~~~
 
-The remaining commands work in either shell. Install the development and model extras from the repository root so the tests can exercise the provider SDK with a fake client. Installation needs access to the dependencies. The walkthrough itself uses bundled data and requires no API credentials.
+The remaining commands work in either shell. Install the development extra from the repository root. The tests exercise the provider with a local subprocess fixture. Installation needs access to the dependencies. The walkthrough itself uses bundled data and requires no API credentials.
 
 ~~~sh
-python -m pip install -e ".[dev,model]"
+python -m pip install -e ".[dev]"
 guardrail --version
 ~~~
 
@@ -162,7 +162,7 @@ Operational diagnostics go to standard error. A partial review applies the same 
 
 ## Review pull requests with GitHub Actions
 
-In a consumer repository, save this workflow as `.github/workflows/guardrail.yml`. Replace `OWNER/GUARDRAIL_REPO` with the repository publishing this action and `FULL_COMMIT_SHA` with a trusted commit containing `action.yml`.
+In a consumer repository, save this workflow as `.github/workflows/guardrail.yml`. Replace `FULL_COMMIT_SHA` with a trusted commit of this project containing `action.yml`.
 
 ~~~yaml
 name: Guardrail PR review
@@ -177,7 +177,7 @@ jobs:
   review:
     runs-on: ubuntu-latest
     steps:
-      - uses: OWNER/GUARDRAIL_REPO@FULL_COMMIT_SHA
+      - uses: piyushtiwary/AI-Code-Review-Guardrail-Prompt-Library@FULL_COMMIT_SHA
         with:
           comment: 'true'
 ~~~
@@ -187,7 +187,7 @@ The action installs Guardrail from the selected action revision. It fetches both
 | Input | Default | Effect |
 | --- | --- | --- |
 | `fail-on` | `blocking` | Warnings below the threshold produce a job warning and pass. Set to `warning` to fail on warnings too. Blocking findings and operational errors fail the job. |
-| `use-llm` | `false` | Set to `true` and supply `OPENAI_API_KEY` and `GUARDRAIL_MODEL` in the step environment to enable model review on same-repository PRs. Fork PRs run local checks without a model secret. |
+| `use-llm` | `false` | Set to `true` on a runner with an installed, authenticated Codex CLI to enable live review of same-repository PRs. The default hosted workflow runs offline. Fork PRs always use local checks. |
 | `comment` | `false` | Set to `true` to post the summary and refresh it on reruns, including after a clean push. |
 
 For log-only reviews, omit `comment` and grant only `contents: read`. When commenting is enabled, the CLI prints the report first. If GitHub denies the comment with HTTP 403, the log records the limitation and the review keeps its normal exit status. This supports the default read-only workflow token on fork PRs.
@@ -204,7 +204,9 @@ Supply the event's base SHA, head SHA, and PR number as step environment variabl
 
 ## Optional model review
 
-Install the provider extra with `python -m pip install -e ".[model]"`. Set `OPENAI_API_KEY` in your environment and `GUARDRAIL_MODEL` to the ID of a text model available to your account through the [OpenAI Responses API](https://developers.openai.com/api/reference/resources/responses/methods/create). Then opt in on either review input mode.
+Install the native Codex CLI and sign in once with `codex --no-daemon login`. Check `codex --no-daemon login status`, then use one of the commands below. Guardrail starts the local executable for each eligible request. Codex sends that request to the model service using its own authentication. Live review requires network access and an account with access to `gpt-6-sol`. [Codex authentication](https://developers.openai.com/codex/auth/)
+
+On Windows, Guardrail checks `%LOCALAPPDATA%\Programs\OpenAI\Codex\bin\codex.exe`. It also supports a native executable on PATH. To select a different installation, set `GUARDRAIL_CODEX_BIN` to its absolute executable path. The adapter was tested with Codex CLI 0.172.0.
 
 ~~~sh
 guardrail review --base main --head HEAD --use-llm
@@ -213,7 +215,7 @@ guardrail review --diff changes.patch --patch-only --use-llm
 
 Local checks run first. A Python hunk qualifies when a local finding points to one of its added lines, or when it contains at least 12 nonblank, non-comment added lines. The second rule uses hunk size as a proxy for complexity. With no eligible hunks, the CLI skips the provider. The default and explicit `--no-llm` modes run offline, including when credentials are present.
 
-Guardrail sends at most one request. It uses the instructions from `diff-edge-case-review` version `1.0.0` and supplies the selected, redacted hunks as user input. In patch order it includes whole hunks that fit within a combined 16 KiB UTF-8 budget for instructions and input. It skips hunks with masked paths or unencodable text. The request has a 30-second deadline, a 2,048-token output limit, and zero retries.
+Guardrail starts at most one Codex process per review. It uses the instructions from `diff-edge-case-review` version `1.0.0` and supplies the selected, redacted hunks as user input. In patch order it includes whole hunks that fit within a combined 16 KiB UTF-8 budget for instructions and input. It skips hunks with masked paths or unencodable text. Python launches `codex --no-daemon -a never exec` with `--model gpt-6-sol` and `model_reasoning_effort="medium"`. It sends data through UTF-8 stdin in a temporary working directory. The session is ephemeral and read-only, with shell tools and web search disabled. Guardrail enforces a 120-second deadline and a 64 KiB limit on the final answer. Benchmark token counts come from the completed-turn event. [Non-interactive Codex](https://developers.openai.com/codex/noninteractive/), [Configuration reference](https://developers.openai.com/codex/config-reference/)
 
 The CLI validates each returned finding independently. A model finding must use the prompt's check ID and match an exact path and added line from the submitted hunks. Accepted findings participate in the usual exit threshold. Omitted eligible hunks, rejected findings, malformed responses, and provider failures mark model review incomplete in the report. Local findings and their exit thresholds still apply.
 
@@ -275,7 +277,7 @@ guardrail prompts eval --offline > replay-results.json
 | `lookup` | The module compiles and imports pytest. Each request has a distinct, parameterless top-level test with Arrange, Act and Assert comments, its expected HTTP response, and a final `pytest.fail("TODO: implement this scenario")`. Guardrail inspects the source without executing it. |
 | `booking-capacity` | The story title matches, the required scenarios appear in order, and each has nonempty Given, When and Then clauses in order. |
 
-To evaluate fresh responses, install the model extra and set `OPENAI_API_KEY` and `GUARDRAIL_MODEL` as described under **Optional model review**. Live mode sends one rendered prompt per example and applies the same checks.
+To evaluate fresh responses, sign in to Codex as described under **Optional model review**. Live mode sends one rendered prompt per example and applies the same checks.
 
 ~~~sh
 guardrail prompts eval --live > live-results.json

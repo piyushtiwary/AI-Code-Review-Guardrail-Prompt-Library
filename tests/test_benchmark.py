@@ -9,7 +9,8 @@ from typer.testing import CliRunner
 from guardrail.benchmark import measure
 from guardrail.benchmark_score import Observation, Outcome, Rates, Run, score, summary
 from guardrail.cli import app
-from guardrail.model_review import PROMPT_ID, ResponseUsage
+from guardrail.codex_cli import ResponseUsage
+from guardrail.model_review import PROMPT_ID
 
 DATASET = Path(__file__).resolve().parents[1] / "benchmarks"
 TARGETS = {
@@ -63,7 +64,7 @@ def test_hand_counted_subset():
         score([*rows, rows[0]], targets, Rates())
 
 
-def test_blind_model_observations_and_regenerating_report(tmp_path, monkeypatch):
+def test_blind_model_observations_and_regenerating_report(tmp_path):
     base = tmp_path / "inputs" / "dispatch"
     shutil.copytree(DATASET / "inputs/dispatch/base", base / "base")
     (base / "patches").mkdir()
@@ -88,7 +89,6 @@ def test_blind_model_observations_and_regenerating_report(tmp_path, monkeypatch)
         return "invalid"
 
     rates = Rates(input=2, cached_input=1, output=5)
-    monkeypatch.setenv("GUARDRAIL_MODEL", "test-alias")
     run = measure(tmp_path, True, rates, provider)
     assert len(calls) == 2
     defect, partial, clean = run.model_assisted
@@ -151,8 +151,6 @@ def test_run_saves_partial_provider_metadata_before_reporting_failure(
         settings={}, rates=Rates(), deterministic=[local], model_assisted=[partial]
     )
     monkeypatch.setattr("guardrail.benchmark.measure", lambda *args: run)
-    monkeypatch.setenv("OPENAI_API_KEY", "fixture")
-    monkeypatch.setenv("GUARDRAIL_MODEL", "fixture")
     out = tmp_path / "partial.json"
     result = CliRunner().invoke(app, ["benchmark", "run", "--live", "--out", str(out)])
     assert result.exit_code == 3

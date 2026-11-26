@@ -8,7 +8,8 @@ import typer
 from rich.console import Console
 
 from guardrail.benchmark import app as benchmark_app
-from guardrail.model_review import openai_review, review_with_model
+from guardrail.codex_cli import codex_review
+from guardrail.model_review import review_with_model
 from guardrail.patch import PatchInputError
 from guardrail.pr_summary import PublishError, publish_summary, render_summary
 from guardrail.prompt_eval import evaluate
@@ -45,7 +46,7 @@ def eval_prompts(
     """Score all examples and print JSON. The default replays offline fixtures."""
     try:
         records, status = asyncio.run(
-            evaluate(load_prompts().values(), openai_review if live else None)
+            evaluate(load_prompts().values(), codex_review if live else None)
         )
         typer.echo(
             json.dumps(
@@ -157,7 +158,7 @@ def review(
 
     model_status = None
     if use_llm and not no_llm:
-        model_review = asyncio.run(review_with_model(source, findings, openai_review))
+        model_review = asyncio.run(review_with_model(source, findings, codex_review))
         findings = sorted_findings([*findings, *model_review.findings])
         model_status = model_review.status
     render_report(Console(), source, findings, model_status)

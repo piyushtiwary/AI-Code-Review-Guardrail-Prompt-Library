@@ -2,13 +2,13 @@
 
 import asyncio
 import json
-import os
 from collections.abc import Awaitable, Callable, Iterator
 from dataclasses import dataclass
 
 from pydantic import ValidationError
 from unidiff import Hunk
 
+from guardrail.codex_cli import TIMEOUT_SECONDS, ProviderError
 from guardrail.prompts import load_prompts
 from guardrail.review import Finding
 from guardrail.source import ReviewSource
@@ -16,67 +16,7 @@ from guardrail.source import ReviewSource
 PROMPT_ID = "diff-edge-case-review"
 PROMPT_VERSION = "1.0.0"
 MAX_INPUT_BYTES = 16_384
-TIMEOUT_SECONDS = 30
 COMPLEXITY_LINES = 12
-MAX_OUTPUT_TOKENS = 2048
-
-
-class ProviderError(Exception):
-    """A diagnostic safe to include in the review report."""
-
-
-@dataclass(frozen=True)
-class ResponseUsage:
-    model: str | None
-    input_tokens: int | None
-    cached_input_tokens: int | None
-    output_tokens: int | None
-
-
-async def openai_review(
-    instructions: str,
-    hunks: str,
-    *,
-    record_usage: Callable[[ResponseUsage], None] | None = None,
-) -> str:
-    key = os.environ.get("OPENAI_API_KEY")
-    model = os.environ.get("GUARDRAIL_MODEL")
-    if not key or not model:
-        raise ProviderError("set OPENAI_API_KEY and GUARDRAIL_MODEL")
-    try:
-        from openai import APIStatusError, APITimeoutError, AsyncOpenAI
-    except ImportError:
-        raise ProviderError("install the model extra to enable OpenAI review") from None
-
-    async with AsyncOpenAI(
-        api_key=key, max_retries=0, timeout=TIMEOUT_SECONDS
-    ) as client:
-        try:
-            response = await client.responses.create(
-                model=model,
-                instructions=instructions,
-                input=hunks,
-                max_output_tokens=MAX_OUTPUT_TOKENS,
-                store=False,
-            )
-        except APITimeoutError:
-            raise TimeoutError from None
-        except APIStatusError as exc:
-            raise ProviderError(f"OpenAI returned HTTP {exc.status_code}") from None
-    if record_usage is not None:
-        usage = response.usage
-        details = usage.input_tokens_details if usage else None
-        record_usage(
-            ResponseUsage(
-                response.model,
-                usage.input_tokens if usage else None,
-                details.cached_tokens if details else None,
-                usage.output_tokens if usage else None,
-            )
-        )
-    if response.status != "completed":
-        raise ProviderError("provider returned an incomplete response")
-    return response.output_text
 
 
 @dataclass
@@ -119,7 +59,7 @@ async def review_with_model(
     skipped = 0
     try:
         prompt = load_prompts()[PROMPT_ID, PROMPT_VERSION].prompt
-        # The trusted instructions and untrusted diff travel in separate API fields.
+        # The trusted instructions and untrusted diff travel in separate CLI inputs.
         instructions = prompt.render({"hunks": ""})
         remaining = MAX_INPUT_BYTES - len(instructions.encode("utf-8"))
         for path, hunk, lines in _eligible_hunks(source, deterministic):
@@ -152,7 +92,7 @@ async def review_with_model(
         return ModelReview([], "Model review incomplete: request timed out.")
     except ProviderError as exc:
         return ModelReview([], f"Model review incomplete: {exc}.")
-    except Exception:  # noqa: BLE001 - SDK errors may contain credentials or raw input
+    except Exception:  # noqa: BLE001 - Provider errors may contain credentials or raw input
         return ModelReview(
             [], "Model review incomplete: could not prepare or complete the request."
         )

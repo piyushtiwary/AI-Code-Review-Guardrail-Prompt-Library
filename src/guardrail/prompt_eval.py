@@ -4,7 +4,6 @@ import ast
 import asyncio
 import io
 import json
-import os
 import re
 import tokenize
 from collections import Counter
@@ -13,7 +12,7 @@ from datetime import UTC, datetime
 
 from pydantic import ValidationError
 
-from guardrail.model_review import TIMEOUT_SECONDS, ProviderError
+from guardrail.codex_cli import MODEL, TIMEOUT_SECONDS, ProviderError
 from guardrail.prompts import (
     CriteriaContract,
     Evaluation,
@@ -177,7 +176,7 @@ async def _request(
         raise ProviderError("provider request timed out") from None
     except ProviderError:
         raise
-    except Exception:  # noqa: BLE001 - SDK diagnostics can contain request data or credentials
+    except Exception:  # noqa: BLE001 - Provider diagnostics can contain request data or credentials
         raise ProviderError("could not complete provider request") from None
 
 
@@ -186,10 +185,6 @@ async def evaluate(
     provider: Callable[[str, str], Awaitable[str]] | None = None,
 ) -> tuple[list[Result], int]:
     live = provider is not None
-    model = os.environ.get("GUARDRAIL_MODEL") if live else None
-    if live and not (model and os.environ.get("OPENAI_API_KEY")):
-        raise PromptError("live evaluation requires OPENAI_API_KEY and GUARDRAIL_MODEL")
-
     records = []
     status = 0
     for entry in entries:
@@ -218,8 +213,8 @@ async def evaluate(
                     mode="live" if live else "offline",
                     passed=passed,
                     reason=reason,
-                    provider="openai" if live else None,
-                    model=model,
+                    provider="codex-cli" if live else None,
+                    model=MODEL if live else None,
                     evaluated_on=datetime.now(UTC).date() if live else None,
                 )
             )

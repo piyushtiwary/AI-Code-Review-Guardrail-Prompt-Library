@@ -37,7 +37,7 @@ def review(tmp_path, monkeypatch):
 
     def invoke(provider, patch=PATCH, options=("--use-llm",)):
         path.write_text(patch, encoding="utf-8")
-        monkeypatch.setattr(cli, "openai_review", provider)
+        monkeypatch.setattr(cli, "codex_review", provider)
         return CliRunner().invoke(
             cli.app, ["review", "--diff", str(path), "--patch-only", *options]
         )
@@ -181,90 +181,3 @@ def test_over_budget_hunk_is_omitted_and_cannot_supply_an_anchor(review):
     assert "1 eligible hunk(s) omitted" in result.output
     assert "1 invalid or unanchored item(s) discarded" in result.output
     assert "Accepted finding." not in result.output
-
-
-def test_missing_configuration_disclosed_without_losing_local_findings(
-    review, monkeypatch
-):
-    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    result = review(model_review.openai_review)
-    assert result.exit_code == 2
-    assert (
-        "Model review incomplete: set OPENAI_API_KEY and GUARDRAIL_MODEL"
-        in result.output
-    )
-    assert "booking.py:9  BLOCKING  secrets" in result.output
-
-
-@pytest.mark.parametrize("status", [200, 206, 429])
-def test_openai_adapter_with_mock_transport(review, monkeypatch, status):
-    openai = pytest.importorskip("openai")
-    import httpx
-
-    requests = []
-
-    def respond(request):
-        requests.append(request)
-        if status == 429:
-            return httpx.Response(status, json={"error": {"message": TOKEN}})
-        return httpx.Response(
-            200,
-            json={
-                "status": "completed" if status == 200 else "incomplete",
-                "model": "fixture-snapshot",
-                "usage": {
-                    "input_tokens": 120,
-                    "input_tokens_details": {"cached_tokens": 20},
-                    "output_tokens": 34,
-                    "output_tokens_details": {"reasoning_tokens": 4},
-                    "total_tokens": 154,
-                },
-                "output": [
-                    {
-                        "type": "message",
-                        "role": "assistant",
-                        "content": [
-                            {"type": "output_text", "text": json.dumps([item()])}
-                        ],
-                    }
-                ],
-            },
-        )
-
-    client_class = openai.AsyncOpenAI
-
-    def make_client(**kwargs):
-        transport = httpx.MockTransport(respond)
-        return client_class(
-            http_client=httpx.AsyncClient(transport=transport), **kwargs
-        )
-
-    monkeypatch.setattr(openai, "AsyncOpenAI", make_client)
-    monkeypatch.setenv("OPENAI_API_KEY", "fixture-key")
-    monkeypatch.setenv("OPENAI_BASE_URL", "https://provider.invalid/v1")
-    monkeypatch.setenv("GUARDRAIL_MODEL", "fixture-model")
-    usage = []
-
-    async def provider(instructions, hunks):
-        return await model_review.openai_review(
-            instructions, hunks, record_usage=usage.append
-        )
-
-    result = review(provider)
-    assert result.exit_code == 2
-    (request,) = requests
-    assert request.url.path == "/v1/responses"
-    payload = json.loads(request.content)
-    assert payload["model"] == "fixture-model"
-    assert "booking.py" not in payload["instructions"]
-    assert "booking.py" in payload["input"] and "[REDACTED]" in payload["input"]
-    assert payload["max_output_tokens"] == 2048 and payload["store"] is False
-    assert TOKEN not in request.content.decode() + result.output
-    if status == 200:
-        assert "booking.py:10  WARNING  diff-edge-case-review" in result.output
-    elif status == 206:
-        assert "provider returned an incomplete response" in result.output
-    else:
-        assert "Model review incomplete: OpenAI returned HTTP 429" in result.output
-    expected = model_review.ResponseUsage("fixture-snapshot", 120, 20, 34)
-    assert usage == ([] if status == 429 else [expected])

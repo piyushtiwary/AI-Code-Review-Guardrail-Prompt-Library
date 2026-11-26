@@ -24,7 +24,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install development dependencies
-        run: python -m pip install -e ".[dev,model]"
+        run: python -m pip install -e ".[dev]"
       - name: Run the test suite and enforce coverage
         run: python -m pytest
       - name: Build and exercise the installed wheel

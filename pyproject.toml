@@ -24,7 +24,6 @@ guardrail = "guardrail.cli:app"
 
 [project.optional-dependencies]
 dev = ["pytest", "pytest-cov", "syrupy"]
-model = ["openai>=1.68,<3"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

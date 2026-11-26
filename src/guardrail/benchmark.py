@@ -2,13 +2,12 @@
 
 import asyncio
 import hashlib
-import os
 import platform
 import shutil
 import subprocess
 import sys
 from datetime import UTC, datetime
-from importlib.metadata import PackageNotFoundError, version
+from importlib.metadata import version
 from pathlib import Path
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from time import perf_counter
@@ -17,7 +16,7 @@ from typing import Annotated
 import typer
 import yaml
 
-from guardrail import model_review
+from guardrail import codex_cli, model_review
 from guardrail.benchmark_score import Observation, Outcome, Rates, Run, summary
 from guardrail.patch import PatchInputError
 from guardrail.review import DEFAULT_CHECKS, CheckError, run_checks
@@ -76,7 +75,7 @@ def review_case(patch: Path, checkout: Path, live: bool, provider) -> Outcome:
 
 
 def measure(
-    root: Path, live: bool, rates: Rates, provider=model_review.openai_review
+    root: Path, live: bool, rates: Rates, provider=codex_cli.codex_review
 ) -> Run:
     inputs = root.resolve() / "inputs"
     patches = sorted(inputs.glob("*/patches/*.patch"), key=lambda p: p.stem)
@@ -97,16 +96,11 @@ def measure(
         "Findings included": "All severities",
         "Model prompt": f"{model_review.PROMPT_ID} {model_review.PROMPT_VERSION}",
         "Model selection": f"Flagged Python hunks or at least {model_review.COMPLEXITY_LINES} added code lines",
-        "Request limits": f"{model_review.MAX_INPUT_BYTES} input bytes, {model_review.MAX_OUTPUT_TOKENS} output tokens, {model_review.TIMEOUT_SECONDS}s timeout, zero retries",
-        "Provider / requested model": f"OpenAI / {os.environ['GUARDRAIL_MODEL']}"
+        "Request limits": f"{model_review.MAX_INPUT_BYTES} input bytes, {codex_cli.MAX_REPLY_BYTES} maximum reply bytes, {model_review.TIMEOUT_SECONDS}s timeout, one CLI invocation",
+        "Provider / requested model": f"Codex CLI / {codex_cli.MODEL} ({codex_cli.REASONING} reasoning)"
         if live
         else "Awaiting live run",
     }
-    if live:
-        try:
-            settings["Provider SDK"] = f"openai {version('openai')}"
-        except PackageNotFoundError:
-            settings["Provider SDK"] = "Unavailable"
     run = Run(
         settings=settings,
         rates=rates,
@@ -171,10 +165,6 @@ def run_benchmark(
         float | None, typer.Option(min=0, help="USD per million output tokens.")
     ] = None,
 ) -> None:
-    if live and not all(
-        os.environ.get(k) for k in ("OPENAI_API_KEY", "GUARDRAIL_MODEL")
-    ):
-        raise typer.BadParameter("--live requires OPENAI_API_KEY and GUARDRAIL_MODEL.")
     try:
         rates = Rates(
             input=input_rate, cached_input=cached_input_rate, output=output_rate
