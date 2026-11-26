@@ -1,0 +1,22 @@
+diff --git a/catalog.py b/catalog.py
+--- a/catalog.py
++++ b/catalog.py
+@@ -3,7 +3,7 @@
+ 
+ def display_name(record):
+     """Use the SKU when the optional display name is absent."""
+-    return record.get("name") or record["sku"]
++    return record.get("name").strip() or record["sku"]
+ 
+ 
+ def list_price(record):
+diff --git a/tests/test_catalog.py b/tests/test_catalog.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_catalog.py
+@@ -0,0 +1,5 @@
++from catalog import display_name
++
++
++def test_trimmed_name():
++    assert display_name({"sku": "P2", "name": "  Bolt "}) == "Bolt"

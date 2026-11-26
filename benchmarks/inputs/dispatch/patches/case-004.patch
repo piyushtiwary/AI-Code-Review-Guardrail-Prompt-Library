@@ -1,0 +1,35 @@
+diff --git a/dispatch.py b/dispatch.py
+--- a/dispatch.py
++++ b/dispatch.py
+@@ -9,3 +9,20 @@
+ def notify(send, shipment):
+     """Deliver a notice through the supplied transport."""
+     send(shipment)
++
++
++def route_summary(stops, depot=None):
++    """Group the route under the assigned depot, defaulting to central."""
++    name = depot.strip() or DEFAULT_DEPOT
++    active = []
++    cancelled = 0
++    for stop in stops:
++        if stop["cancelled"]:
++            cancelled += 1
++        else:
++            active.append(stop["code"])
++    return {
++        "depot": name,
++        "active": active,
++        "cancelled": cancelled,
++    }
+diff --git a/tests/test_dispatch.py b/tests/test_dispatch.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_dispatch.py
+@@ -0,0 +1,6 @@
++from dispatch import route_summary
++
++
++def test_active_route():
++    stops = [{"code": "W", "cancelled": False}]
++    assert route_summary(stops, "west")["active"] == ["W"]

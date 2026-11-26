@@ -1,0 +1,24 @@
+diff --git a/booking.py b/booking.py
+--- a/booking.py
++++ b/booking.py
+@@ -14,3 +14,10 @@
+ def booking_limit(override=None):
+     """Use the system limit only when there is no override."""
+     return DEFAULT_LIMIT if override is None else override
++
++
++def seat_at(seats, number):
++    """Return the numbered seat (first seat is 1), or None if absent."""
++    if not 1 <= number <= len(seats):
++        return None
++    return seats[number]
+diff --git a/tests/test_booking.py b/tests/test_booking.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_booking.py
+@@ -0,0 +1,5 @@
++from booking import seat_at
++
++
++def test_unassigned_number():
++    assert seat_at(["window"], 0) is None

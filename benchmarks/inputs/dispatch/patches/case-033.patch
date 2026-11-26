@@ -1,0 +1,7 @@
+diff --git a/transport.env b/transport.env
+new file mode 100644
+--- /dev/null
++++ b/transport.env
+@@ -0,0 +1,2 @@
++DISPATCH_ID=550e8400-e29b-41d4-a716-446655440000
++DISPATCH_AUTH_TOKEN=${TRANSPORT_CREDENTIAL}

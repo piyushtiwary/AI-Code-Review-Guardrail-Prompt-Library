@@ -1,0 +1,22 @@
+diff --git a/catalog.py b/catalog.py
+--- a/catalog.py
++++ b/catalog.py
+@@ -8,4 +8,7 @@
+ 
+ def list_price(record):
+     """Return the price in cents, including a valid zero price."""
+-    return record["cents"]
++    try:
++        return int(record["cents"])
++    except Exception:
++        return 0
+diff --git a/tests/test_catalog.py b/tests/test_catalog.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_catalog.py
+@@ -0,0 +1,5 @@
++from catalog import list_price
++
++
++def test_decimal_text():
++    assert list_price({"cents": "240"}) == 240

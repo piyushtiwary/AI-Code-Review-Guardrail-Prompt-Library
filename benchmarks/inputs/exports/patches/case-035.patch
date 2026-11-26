@@ -1,0 +1,23 @@
+diff --git a/exports.py b/exports.py
+--- a/exports.py
++++ b/exports.py
+@@ -9,3 +9,7 @@
+     """Write every row to the supplied sink."""
+     for row in rows:
+         write(row)
++
++
++async def flush_rows(sink):
++    await sink.flush()
+diff --git a/tests/test_exports.py b/tests/test_exports.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_exports.py
+@@ -0,0 +1,7 @@
++from exports import export_rows
++
++
++def test_row_order():
++    saved = []
++    export_rows(saved.append, [2, 1])
++    assert saved == [2, 1]

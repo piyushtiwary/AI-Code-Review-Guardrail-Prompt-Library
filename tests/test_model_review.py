@@ -196,7 +196,7 @@ def test_missing_configuration_disclosed_without_losing_local_findings(
     assert "booking.py:9  BLOCKING  secrets" in result.output
 
 
-@pytest.mark.parametrize("status", [200, 429])
+@pytest.mark.parametrize("status", [200, 206, 429])
 def test_openai_adapter_with_mock_transport(review, monkeypatch, status):
     openai = pytest.importorskip("openai")
     import httpx
@@ -205,12 +205,20 @@ def test_openai_adapter_with_mock_transport(review, monkeypatch, status):
 
     def respond(request):
         requests.append(request)
-        if status != 200:
+        if status == 429:
             return httpx.Response(status, json={"error": {"message": TOKEN}})
         return httpx.Response(
             200,
             json={
-                "status": "completed",
+                "status": "completed" if status == 200 else "incomplete",
+                "model": "fixture-snapshot",
+                "usage": {
+                    "input_tokens": 120,
+                    "input_tokens_details": {"cached_tokens": 20},
+                    "output_tokens": 34,
+                    "output_tokens_details": {"reasoning_tokens": 4},
+                    "total_tokens": 154,
+                },
                 "output": [
                     {
                         "type": "message",
@@ -235,7 +243,14 @@ def test_openai_adapter_with_mock_transport(review, monkeypatch, status):
     monkeypatch.setenv("OPENAI_API_KEY", "fixture-key")
     monkeypatch.setenv("OPENAI_BASE_URL", "https://provider.invalid/v1")
     monkeypatch.setenv("GUARDRAIL_MODEL", "fixture-model")
-    result = review(model_review.openai_review)
+    usage = []
+
+    async def provider(instructions, hunks):
+        return await model_review.openai_review(
+            instructions, hunks, record_usage=usage.append
+        )
+
+    result = review(provider)
     assert result.exit_code == 2
     (request,) = requests
     assert request.url.path == "/v1/responses"
@@ -247,5 +262,9 @@ def test_openai_adapter_with_mock_transport(review, monkeypatch, status):
     assert TOKEN not in request.content.decode() + result.output
     if status == 200:
         assert "booking.py:10  WARNING  diff-edge-case-review" in result.output
+    elif status == 206:
+        assert "provider returned an incomplete response" in result.output
     else:
         assert "Model review incomplete: OpenAI returned HTTP 429" in result.output
+    expected = model_review.ResponseUsage("fixture-snapshot", 120, 20, 34)
+    assert usage == ([] if status == 429 else [expected])

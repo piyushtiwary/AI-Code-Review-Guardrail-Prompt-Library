@@ -1,0 +1,28 @@
+diff --git a/dispatch.py b/dispatch.py
+--- a/dispatch.py
++++ b/dispatch.py
+@@ -8,4 +8,10 @@
+ 
+ def notify(send, shipment):
+     """Deliver a notice through the supplied transport."""
+-    send(shipment)
++    import logging
++
++    try:
++        send(shipment)
++    except Exception:
++        logging.exception("Shipment notice failed")
++        raise
+diff --git a/tests/test_dispatch.py b/tests/test_dispatch.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_dispatch.py
+@@ -0,0 +1,8 @@
++import pytest
++
++from dispatch import notify
++
++
++def test_transport_error_propagates():
++    with pytest.raises(KeyError):
++        notify({}.__getitem__, "absent")

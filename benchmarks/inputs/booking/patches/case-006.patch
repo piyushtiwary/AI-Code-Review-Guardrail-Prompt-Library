@@ -1,0 +1,23 @@
+diff --git a/booking.py b/booking.py
+--- a/booking.py
++++ b/booking.py
+@@ -4,6 +4,9 @@
+ class Booking:
+     def __init__(self, seats):
+         self.seats = seats
++
++    def fits(self, available):
++        return self.seats <= available
+ 
+ 
+ def seats_available(booked, capacity):
+diff --git a/tests/test_booking.py b/tests/test_booking.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_booking.py
+@@ -0,0 +1,5 @@
++from booking import Booking
++
++
++def test_requested_seats():
++    assert Booking(2).seats == 2

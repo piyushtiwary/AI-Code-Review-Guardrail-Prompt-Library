@@ -31,3 +31,10 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 guardrail = ["templates/*.jinja2", "prompt_library/*.yaml", "prompt_library/fixtures/*.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=guardrail --cov-report=term-missing --cov-fail-under=85"
+
+[tool.coverage.report]
+precision = 2

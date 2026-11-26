@@ -1,0 +1,31 @@
+diff --git a/dispatch.py b/dispatch.py
+--- a/dispatch.py
++++ b/dispatch.py
+@@ -9,3 +9,17 @@
+ def notify(send, shipment):
+     """Deliver a notice through the supplied transport."""
+     send(shipment)
++
++
++def tracking_labels(prefix, first, last):
++    """Build labels for every stop from first through last, inclusive."""
++    if first < 1:
++        raise ValueError("stop numbers start at one")
++    if last < first:
++        return []
++    labels = []
++    width = len(str(last))
++    for stop in range(first, last):
++        number = str(stop).zfill(width)
++        labels.append(f"{prefix}-{number}")
++    return labels
+diff --git a/tests/test_dispatch.py b/tests/test_dispatch.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_dispatch.py
+@@ -0,0 +1,5 @@
++from dispatch import tracking_labels
++
++
++def test_reversed_route():
++    assert tracking_labels("W", 8, 7) == []

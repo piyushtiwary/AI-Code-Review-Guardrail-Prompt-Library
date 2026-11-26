@@ -1,0 +1,10 @@
+diff --git a/exports.py b/exports.py
+--- a/exports.py
++++ b/exports.py
+@@ -7,5 +7,6 @@
+ 
+ def export_rows(write, rows):
+     """Write every row to the supplied sink."""
++    # Preserve the caller's row order.
+     for row in rows:
+         write(row)

@@ -1,0 +1,24 @@
+diff --git a/exports.py b/exports.py
+--- a/exports.py
++++ b/exports.py
+@@ -9,3 +9,9 @@
+     """Write every row to the supplied sink."""
+     for row in rows:
+         write(row)
++
++
++def compress_rows(data):
++    import export_zlbi as codec
++
++    return codec.compress(data)
+diff --git a/tests/test_exports.py b/tests/test_exports.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_exports.py
+@@ -0,0 +1,6 @@
++from exports import compress_rows
++import zlib
++
++
++def test_compressed_rows_round_trip():
++    assert zlib.decompress(compress_rows(b"a,b")) == b"a,b"

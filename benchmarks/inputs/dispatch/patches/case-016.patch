@@ -1,0 +1,6 @@
+diff --git a/transport.env b/transport.env
+new file mode 100644
+--- /dev/null
++++ b/transport.env
+@@ -0,0 +1 @@
++DISPATCH_AUTH_TOKEN=ghp_DemoOnly7DemoOnly7DemoOnly7DemoOnly7

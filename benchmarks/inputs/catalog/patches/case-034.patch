@@ -1,0 +1,25 @@
+diff --git a/catalog.py b/catalog.py
+--- a/catalog.py
++++ b/catalog.py
+@@ -9,3 +9,11 @@
+ def list_price(record):
+     """Return the price in cents, including a valid zero price."""
+     return record["cents"]
++
++
++def currency(record, local=False):
++    if local:
++        from currencies import LOCAL_CURRENCY as default
++
++        return record.get("currency", default)
++    return record.get("currency", DEFAULT_CURRENCY)
+diff --git a/tests/test_catalog.py b/tests/test_catalog.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_catalog.py
+@@ -0,0 +1,5 @@
++from catalog import currency
++
++
++def test_currency_override():
++    assert currency({"currency": "USD"}) == "USD"

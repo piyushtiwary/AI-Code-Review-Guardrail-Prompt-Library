@@ -1,0 +1,27 @@
+diff --git a/booking.py b/booking.py
+--- a/booking.py
++++ b/booking.py
+@@ -14,3 +14,11 @@
+ def booking_limit(override=None):
+     """Use the system limit only when there is no override."""
+     return DEFAULT_LIMIT if override is None else override
++
++
++def confirm(save, reservation):
++    try:
++        save(reservation)
++    except:
++        return False
++    return True
+diff --git a/tests/test_booking.py b/tests/test_booking.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_booking.py
+@@ -0,0 +1,7 @@
++from booking import confirm
++
++
++def test_confirmation_saved():
++    saved = []
++    assert confirm(saved.append, 42)
++    assert saved == [42]

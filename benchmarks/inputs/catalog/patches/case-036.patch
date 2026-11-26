@@ -1,0 +1,22 @@
+diff --git a/catalog.py b/catalog.py
+--- a/catalog.py
++++ b/catalog.py
+@@ -9,3 +9,8 @@
+ def list_price(record):
+     """Return the price in cents, including a valid zero price."""
+     return record["cents"]
++
++
++def discount(price, percent=None):
++    """A missing discount leaves the price unchanged."""
++    return price - price * percent // 100
+diff --git a/tests/test_catalog.py b/tests/test_catalog.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_catalog.py
+@@ -0,0 +1,5 @@
++from catalog import discount
++
++
++def test_quarter_off():
++    assert discount(400, 25) == 300

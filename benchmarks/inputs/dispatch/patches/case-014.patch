@@ -1,0 +1,25 @@
+diff --git a/dispatch.py b/dispatch.py
+--- a/dispatch.py
++++ b/dispatch.py
+@@ -9,3 +9,11 @@
+ def notify(send, shipment):
+     """Deliver a notice through the supplied transport."""
+     send(shipment)
++
++
++def encode_notice(shipment, compact=False):
++    if compact:
++        from .wire import dump_notice
++
++        return dump_notice(shipment)
++    return str(shipment)
+diff --git a/tests/test_dispatch.py b/tests/test_dispatch.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_dispatch.py
+@@ -0,0 +1,5 @@
++from dispatch import encode_notice
++
++
++def test_plain_notice():
++    assert encode_notice("ready") == "ready"

@@ -1,0 +1,23 @@
+diff --git a/booking.py b/booking.py
+--- a/booking.py
++++ b/booking.py
+@@ -13,4 +13,6 @@
+ 
+ def booking_limit(override=None):
+     """Use the system limit only when there is no override."""
+-    return DEFAULT_LIMIT if override is None else override
++    if override is None:
++        return DEFAULT_LIMIT
++    return max(0, override)
+diff --git a/tests/test_booking.py b/tests/test_booking.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_booking.py
+@@ -0,0 +1,7 @@
++from booking import DEFAULT_LIMIT, booking_limit
++
++
++def test_optional_limit():
++    assert booking_limit() == DEFAULT_LIMIT
++    assert booking_limit(0) == 0
++    assert booking_limit(-1) == 0

@@ -1,0 +1,23 @@
+diff --git a/catalog.py b/catalog.py
+--- a/catalog.py
++++ b/catalog.py
+@@ -9,3 +9,9 @@
+ def list_price(record):
+     """Return the price in cents, including a valid zero price."""
+     return record["cents"]
++
++
++def currency_label(record):
++    from currencies import REGIONAL_CURRENCY as fallback
++
++    return record.get("currency", fallback)
+diff --git a/tests/test_catalog.py b/tests/test_catalog.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_catalog.py
+@@ -0,0 +1,5 @@
++from catalog import currency_label as label
++
++
++def test_default_currency():
++    assert label({}) == "CHF"

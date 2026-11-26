@@ -1,0 +1,6 @@
+diff --git a/worker.env b/worker.env
+new file mode 100644
+--- /dev/null
++++ b/worker.env
+@@ -0,0 +1 @@
++ACCESS_KEY=AKIADEMODEMODEMODEMO

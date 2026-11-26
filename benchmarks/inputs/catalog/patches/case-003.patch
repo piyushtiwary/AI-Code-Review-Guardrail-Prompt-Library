@@ -1,0 +1,24 @@
+diff --git a/catalog.py b/catalog.py
+--- a/catalog.py
++++ b/catalog.py
+@@ -9,3 +9,10 @@
+ def list_price(record):
+     """Return the price in cents, including a valid zero price."""
+     return record["cents"]
++
++
++def page_count(records, page_size):
++    """Count nonempty pages for a positive page size."""
++    if page_size <= 0:
++        raise ValueError("page size must be positive")
++    return len(records) // page_size + 1
+diff --git a/tests/test_catalog.py b/tests/test_catalog.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_catalog.py
+@@ -0,0 +1,5 @@
++from catalog import page_count
++
++
++def test_partial_page():
++    assert page_count(["P1", "P2", "P3"], 2) == 2

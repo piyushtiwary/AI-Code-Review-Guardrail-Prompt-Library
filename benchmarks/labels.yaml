@@ -1,0 +1,229 @@
+- id: case-001
+  target: null
+  note: Only None selects the default. A zero override remains valid.
+- id: case-002
+  target: null
+  note: Both local aliases resolve and the test references the added function by import.
+- id: case-003
+  target:
+    category: off-by-one
+    anchors:
+    - file: catalog.py
+      line: 18
+  note: An exact multiple of the page size produces a spurious final page.
+- id: case-004
+  target:
+    category: missing-none-handling
+    anchors:
+    - file: dispatch.py
+      line: 16
+  note: Omitting the optional depot raises AttributeError before the default is used.
+- id: case-005
+  target:
+    category: off-by-one
+    anchors:
+    - file: dispatch.py
+      line: 22
+  note: The stop named by the inclusive last argument never receives a label.
+- id: case-006
+  target:
+    category: test-reference
+    anchors:
+    - file: booking.py
+      line: 8
+  note: Construction is exercised, but no test references the new fits method.
+- id: case-007
+  target:
+    category: missing-none-handling
+    anchors:
+    - file: exports.py
+      line: 16
+  note: A null batch is passed to len instead of contributing zero.
+- id: case-008
+  target:
+    category: missing-none-handling
+    anchors:
+    - file: booking.py
+      line: 16
+  note: Calling booking_limit with its default None compares an integer with None.
+- id: case-009
+  target: null
+  note: The broad handler records the transport failure and re-raises it.
+- id: case-010
+  target:
+    category: off-by-one
+    anchors:
+    - file: exports.py
+      line: 16
+  note: A zero-sized preview returns one row when the input is nonempty.
+- id: case-011
+  target:
+    category: missing-none-handling
+    anchors:
+    - file: catalog.py
+      line: 6
+  note: A missing or null display name is stripped before the SKU fallback.
+- id: case-012
+  target:
+    category: exception-handling
+    anchors:
+    - file: dispatch.py
+      line: 13
+    - file: dispatch.py
+      line: 14
+  note: notify reports success even when the supplied transport raises.
+- id: case-013
+  target:
+    category: imports
+    anchors:
+    - file: exports.py
+      line: 15
+  note: The compressor imports a nonexistent codec module.
+- id: case-014
+  target:
+    category: imports
+    anchors:
+    - file: dispatch.py
+      line: 16
+  note: The top-level dispatch module has no parent package for the compact encoder's relative import.
+- id: case-015
+  target:
+    category: test-reference
+    anchors:
+    - file: catalog.py
+      line: 14
+  note: The test includes a currency field but does not reference currency_code.
+- id: case-016
+  target:
+    category: secrets
+    anchors:
+    - file: transport.env
+      line: 1
+  note: The new transport.env embeds a synthetic credential literal.
+- id: case-017
+  target:
+    category: secrets
+    anchors:
+    - file: pricing.env
+      line: 1
+  note: The new pricing.env embeds a synthetic credential literal.
+- id: case-018
+  target: null
+  note: A narrow handler covers the expected missing price and preserves zero.
+- id: case-019
+  target:
+    category: off-by-one
+    anchors:
+    - file: booking.py
+      line: 21
+  note: A request for the exact number of remaining seats is rejected.
+- id: case-020
+  target:
+    category: exception-handling
+    anchors:
+    - file: catalog.py
+      line: 13
+    - file: catalog.py
+      line: 14
+  note: Unexpected failures during price lookup or conversion become a zero price.
+- id: case-021
+  target:
+    category: off-by-one
+    anchors:
+    - file: booking.py
+      line: 23
+  note: A one-based seat number is used directly as a zero-based index.
+- id: case-022
+  target:
+    category: imports
+    anchors:
+    - file: tests/test_booking.py
+      line: 3
+  note: The new test imports available_seats. The base exports seats_available.
+- id: case-023
+  target: null
+  note: The hex digest identifies a file and is not a credential.
+- id: case-024
+  target: null
+  note: The test calls the new method and checks the last available seat.
+- id: case-025
+  target:
+    category: secrets
+    anchors:
+    - file: worker.env
+      line: 1
+  note: The new worker.env embeds a synthetic credential literal.
+- id: case-026
+  target: null
+  note: An exclusive slice implements both the zero and one-row preview boundaries.
+- id: case-027
+  target:
+    category: exception-handling
+    anchors:
+    - file: booking.py
+      line: 22
+    - file: booking.py
+      line: 23
+  note: The bare handler converts even interrupts into a routine failed confirmation.
+- id: case-028
+  target: null
+  note: Only an explanatory comment changes, so the patch needs no test edit.
+- id: case-029
+  target: null
+  note: The multi-branch route summary handles a missing depot before stripping whitespace.
+- id: case-030
+  target:
+    category: exception-handling
+    anchors:
+    - file: exports.py
+      line: 13
+    - file: exports.py
+      line: 14
+  note: A sink failure silently drops a row and continues exporting.
+- id: case-031
+  target:
+    category: test-reference
+    anchors:
+    - file: dispatch.py
+      line: 14
+  note: The test exercises depot selection but never references the new is_local function.
+- id: case-032
+  target:
+    category: secrets
+    anchors:
+    - file: sink.env
+      line: 1
+  note: The new sink.env embeds a synthetic credential literal.
+- id: case-033
+  target: null
+  note: The high-entropy ID is a UUID and the credential is an environment reference.
+- id: case-034
+  target:
+    category: imports
+    anchors:
+    - file: catalog.py
+      line: 16
+  note: Local currency lookup imports a name absent from currencies.py.
+- id: case-035
+  target:
+    category: test-reference
+    anchors:
+    - file: exports.py
+      line: 14
+  note: The row-order test never references the new asynchronous flush function.
+- id: case-036
+  target:
+    category: missing-none-handling
+    anchors:
+    - file: catalog.py
+      line: 16
+  note: The optional percent defaults to None, which cannot be multiplied by the price.
+- id: case-037
+  target:
+    category: no-test-changes
+    anchors:
+    - file: booking.py
+      line: 16
+    - file: booking.py
+      line: 18
+  note: The limit now clamps negative overrides to zero and the change includes no test update.

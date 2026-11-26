@@ -1,0 +1,22 @@
+diff --git a/booking.py b/booking.py
+--- a/booking.py
++++ b/booking.py
+@@ -14,3 +14,8 @@
+ def booking_limit(override=None):
+     """Use the system limit only when there is no override."""
+     return DEFAULT_LIMIT if override is None else override
++
++
++def can_book(requested, booked, capacity):
++    """Accept a positive request up to and including all remaining seats."""
++    return 0 < requested < seats_available(booked, capacity)
+diff --git a/tests/test_booking.py b/tests/test_booking.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_booking.py
+@@ -0,0 +1,5 @@
++from booking import can_book
++
++
++def test_small_request():
++    assert can_book(2, 0, 4)

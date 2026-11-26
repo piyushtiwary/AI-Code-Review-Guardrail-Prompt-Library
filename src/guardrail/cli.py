@@ -7,6 +7,7 @@ from typing import Annotated
 import typer
 from rich.console import Console
 
+from guardrail.benchmark import app as benchmark_app
 from guardrail.model_review import openai_review, review_with_model
 from guardrail.patch import PatchInputError
 from guardrail.pr_summary import PublishError, publish_summary, render_summary
@@ -29,6 +30,7 @@ from guardrail.story import StoryInputError, parse_story
 app = typer.Typer(add_completion=False)
 prompts_app = typer.Typer(help="Work with versioned prompts.")
 app.add_typer(prompts_app, name="prompts")
+app.add_typer(benchmark_app, name="benchmark")
 
 
 @prompts_app.command("eval")

@@ -1,0 +1,13 @@
+diff --git a/tests/test_booking.py b/tests/test_booking.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_booking.py
+@@ -0,0 +1,8 @@
++from booking import (
++    DEFAULT_LIMIT,
++    available_seats,
++)
++
++
++def test_initial_capacity():
++    assert available_seats(0, DEFAULT_LIMIT) == DEFAULT_LIMIT

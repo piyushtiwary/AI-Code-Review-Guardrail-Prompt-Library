@@ -1,0 +1,22 @@
+diff --git a/catalog.py b/catalog.py
+--- a/catalog.py
++++ b/catalog.py
+@@ -9,3 +9,7 @@
+ def list_price(record):
+     """Return the price in cents, including a valid zero price."""
+     return record["cents"]
++
++
++def currency_code(record):
++    return record.get("currency", DEFAULT_CURRENCY)
+diff --git a/tests/test_catalog.py b/tests/test_catalog.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_catalog.py
+@@ -0,0 +1,6 @@
++from catalog import display_name
++
++
++def test_sku_as_name():
++    record = {"sku": "P2", "currency": "USD"}
++    assert display_name(record) == "P2"

@@ -1,0 +1,11 @@
+diff --git a/booking.py b/booking.py
+--- a/booking.py
++++ b/booking.py
+@@ -13,4 +13,6 @@
+ 
+ def booking_limit(override=None):
+     """Use the system limit only when there is no override."""
+-    return DEFAULT_LIMIT if override is None else override
++    if override is None:
++        return DEFAULT_LIMIT
++    return max(0, override)

@@ -1,0 +1,23 @@
+diff --git a/exports.py b/exports.py
+--- a/exports.py
++++ b/exports.py
+@@ -9,3 +9,8 @@
+     """Write every row to the supplied sink."""
+     for row in rows:
+         write(row)
++
++
++def first_rows(rows, count):
++    """Return at most count rows for a nonnegative preview size."""
++    return rows[:count]
+diff --git a/tests/test_exports.py b/tests/test_exports.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_exports.py
+@@ -0,0 +1,6 @@
++from exports import first_rows
++
++
++def test_preview_limit():
++    assert first_rows(["a"], 0) == []
++    assert first_rows(["a", "b"], 1) == ["a"]

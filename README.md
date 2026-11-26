@@ -1,39 +1,104 @@
 # Guardrail
 
-## Run the offline examples
+Guardrail reviews Python changes locally, turns acceptance criteria into pytest scaffolds, and evaluates three versioned prompts against their example outputs. Its GitHub Action can publish the review on a pull request.
 
-With Git and an active Python 3.12 environment, run `python -m pip install -e .` from the repository root. After installation, both examples run without network access or credentials.
+## Fresh-clone quick start
 
-The example checkout contains a local module with one default quantity. Each patch adds a quantity parser and its tests. From the repository root, copy the checkout into two new sibling directories so each review reads the matching post-change files. These commands work in PowerShell and POSIX shells.
+Start in the root of a fresh clone with Git and Python 3.12 installed. Create and activate a virtual environment using the commands for your shell.
 
-~~~sh
-cp -r examples/offline/checkout ../guardrail-clean
-cp examples/offline/clean/changes.patch ../guardrail-clean/changes.patch
-cp -r examples/offline/checkout ../guardrail-defective
-cp examples/offline/defective/changes.patch ../guardrail-defective/changes.patch
+**Windows PowerShell**
 
-cd ../guardrail-clean
-git init -q
-git apply changes.patch
-guardrail review --diff changes.patch --no-llm
+~~~powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ~~~
 
-The clean review finds the imported constant, sees the test reference, and accepts the narrow `ValueError` handler. It prints `No findings.` and exits with status **0**. [Expected clean report](examples/offline/clean/expected.txt)
+If the Windows launcher cannot resolve `-3.12`, run `py -0p` and use the full 3.12 interpreter path from its output, for example `& "C:\path to Python 3.12\python.exe" -m venv .venv`. Activate the resulting environment as above.
+
+**Linux**
 
 ~~~sh
-cd ../guardrail-defective
-git init -q
-git apply changes.patch
-guardrail review --diff changes.patch --no-llm
+python3.12 -m venv .venv
+. .venv/bin/activate
 ~~~
 
-The defective review reports an invalid import at `quantities.py:1` and a swallowed exception at `quantities.py:7`. Both are warnings, so the default threshold gives exit status **1**. Read the status immediately after either review with `$LASTEXITCODE` in PowerShell or `echo $?` in a POSIX shell. [Expected defective report](examples/offline/defective/expected.txt)
+The remaining commands work in either shell. Install the development and model extras from the repository root so the tests can exercise the provider SDK with a fake client. Installation needs access to the dependencies. The walkthrough itself uses bundled data and requires no API credentials.
+
+~~~sh
+python -m pip install -e ".[dev,model]"
+guardrail --version
+~~~
+
+Each example starts with the same quantity defaults module. Use two new sibling directories so each patch has its own matching post-change source. Stay in the repository root throughout.
+
+~~~sh
+cp -r examples/offline/checkout "../guardrail clean"
+cp examples/offline/clean/changes.patch "../guardrail clean/changes.patch"
+git -C "../guardrail clean" init -q
+git -C "../guardrail clean" apply changes.patch
+guardrail review --diff "../guardrail clean/changes.patch" --source-root "../guardrail clean" --no-llm
+~~~
+
+The clean patch prints `No findings.` and exits **0**. [Expected clean report](examples/offline/clean/expected.txt)
+
+~~~sh
+cp -r examples/offline/checkout "../guardrail defective"
+cp examples/offline/defective/changes.patch "../guardrail defective/changes.patch"
+git -C "../guardrail defective" init -q
+git -C "../guardrail defective" apply changes.patch
+guardrail review --diff "../guardrail defective/changes.patch" --source-root "../guardrail defective" --no-llm
+~~~
+
+The defective patch imports a missing name at `quantities.py:1` and silently swallows an exception at `quantities.py:7`. Both are warnings. The default threshold gives exit **1**. Read the status immediately with `$LASTEXITCODE` in PowerShell or `echo $?` in a POSIX shell. Replay the recorded terminal session with `asciinema play docs/cli-demo.cast`. [Expected defective report](examples/offline/defective/expected.txt) · [Recorded CLI demo](docs/cli-demo.cast)
+
+Replay the three prompt contracts and run the project's test suite.
+
+~~~sh
+guardrail prompts eval --offline
+python -m pytest
+~~~
+
+Each replay should report `"passed": true`. Pytest runs the unit, patch, CLI, snapshot, prompt-contract and fake-provider tests and fails below 85% statement coverage of the `guardrail` package. The Windows and Linux CI jobs also build a wheel, install it in a second empty environment, and exercise the CLI, prompt fixtures and scaffold template outside the checkout. Run that packaging check locally with `python scripts/smoke_wheel.py`. [Quality workflow](.github/workflows/quality.yml) · [AI-assisted changes and verification](docs/AI_USAGE.md)
+
+Continue the walkthrough by turning the bundled shipment story into two runnable tests, or try the same reviewer on a pull request. [Story-to-scaffold example](#generate-pytest-scaffolds) · [Consumer Action workflow](#review-pull-requests-with-github-actions)
 
 On Linux with unprivileged user and network namespaces enabled, repeat the review from either prepared checkout with networking disabled.
 
 ~~~sh
 unshare --user --map-root-user --net guardrail review --diff changes.patch --no-llm
 ~~~
+
+## How a review works
+
+```mermaid
+flowchart LR
+    A[PR base and head] --> B[Composite Action]
+    B --> C[Resolve merge base and head source]
+    D[Local Git revisions] --> C
+    E[Saved patch and optional checkout] --> F[Changed paths and added lines]
+    C --> F
+    F --> G[Five local checks]
+    G --> H[Ordered findings and exit status]
+    G --> I[Optional model review of selected redacted hunks]
+    I --> J[Validate schema, path and added line]
+    J --> H
+    H --> K[Terminal report]
+    H --> L[Optional PR summary]
+```
+
+| Check | Reports | Source needed |
+| --- | --- | --- |
+| `imports` | Unresolved imports and missing names in simple local modules | Whole files and installed dependency metadata |
+| `exception-handling` | Bare handlers and broad handlers that discard errors | Whole Python files, Ruff and Bandit |
+| `secrets` | Credential-shaped strings and high-entropy credential assignments | Added text lines |
+| `test-reference` | New functions or methods with no plausible reference in tests | Whole source and tests |
+| `no-test-changes` | Executable Python changes with no test-file changes | Patch; whole source improves classification |
+
+### Measured benchmark
+
+In the recorded offline run, Guardrail caught **17 of 27 targets (63.0%)** and flagged **0 of 10 clean patches**. Mean review time was **0.232 seconds per patch** with **$0 model cost**. The ten misses were boundary and missing-None defects. Model-assisted measurements await a live run. [Dataset and scoring rules](benchmarks/README.md)
+
+Run `guardrail benchmark score benchmarks/results/run.json` to reproduce the published results. The [benchmark report](benchmarks/results/summary.md) records recall, clean PRs with false alarms, elapsed time, model cost and live-run status.
 
 ## Choose the source for a review
 
@@ -127,6 +192,8 @@ The action installs Guardrail from the selected action revision. It fetches both
 
 For log-only reviews, omit `comment` and grant only `contents: read`. When commenting is enabled, the CLI prints the report first. If GitHub denies the comment with HTTP 403, the log records the limitation and the review keeps its normal exit status. This supports the default read-only workflow token on fork PRs.
 
+To rehearse the consumer workflow, put it on the consumer's base branch, then open a same-repository PR containing the changes from the defective example against its bundled base. Open the **Guardrail PR review** check and the bot's **Guardrail review** comment. With the default threshold, expect a green job and warnings at lines 1 and 7. Replace the PR's changed files with the clean example and push again. The same comment should update to `No findings.` The local sample PR exercised both revisions and captured the comment before and after the update. [Sample PR summary](docs/sample-pr-summary.md)
+
 To publish from a CLI workflow step, set `GITHUB_TOKEN` to `${{ github.token }}` and pass the PR number to `guardrail review`.
 
 ~~~sh
@@ -158,14 +225,15 @@ Misplaced clauses raise `StoryInputError` with the offending line number. If a s
 
 ## Generate pytest scaffolds
 
-From the repository root with the development extra installed (`python -m pip install -e ".[dev]"`), run the shipment example.
+The shipment story asks a dispatcher to reroute a late shipment and keep an on-time shipment on its original route. From the repository root, select a new temporary output directory. In PowerShell run `$scaffold = Join-Path ([IO.Path]::GetTempPath()) ([guid]::NewGuid().ToString())`. In a POSIX shell run `scaffold=$(mktemp -d)`. Then run the same three commands in either shell.
 
 ~~~sh
-guardrail storygen stories/reroute.feature --out tests/generated/
-python -m pytest tests/generated/test_reroute.py
+guardrail storygen stories/reroute.feature --out "$scaffold"
+python -m pytest --no-cov --collect-only -q "$scaffold/test_reroute.py"
+python -m pytest --no-cov -q "$scaffold/test_reroute.py"
 ~~~
 
-The command creates `test_reroute.py` with one test per scenario. Each test records its steps as Arrange, Act, and Assert comments and ends with `pytest.fail("TODO: implement this scenario")`. Both tests fail until you replace the TODOs with test logic and assertions.
+Collection lists `test_a_shipment_has_breached_its_sla` and `test_a_shipment_is_on_time` and exits **0**. Running them gives **2 failed**, exit **1**. Each test preserves its scenario's wording as Arrange, Act and Assert comments and stops at `pytest.fail("TODO: implement this scenario")`. Replace each TODO with a call to the shipment code and assertions on the route and notification before moving it into your own suite.
 
 If the destination file already exists, generation exits with status 3 and preserves the file. To compare scaffolds after updating a story, generate into a fresh output directory.
 

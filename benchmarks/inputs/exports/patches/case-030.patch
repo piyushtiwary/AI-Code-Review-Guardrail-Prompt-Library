@@ -1,0 +1,24 @@
+diff --git a/exports.py b/exports.py
+--- a/exports.py
++++ b/exports.py
+@@ -8,4 +8,7 @@
+ def export_rows(write, rows):
+     """Write every row to the supplied sink."""
+     for row in rows:
+-        write(row)
++        try:
++            write(row)
++        except Exception:
++            continue
+diff --git a/tests/test_exports.py b/tests/test_exports.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_exports.py
+@@ -0,0 +1,7 @@
++from exports import export_rows
++
++
++def test_export_order():
++    seen = []
++    export_rows(seen.append, ["alpha", "beta"])
++    assert seen == ["alpha", "beta"]

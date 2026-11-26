@@ -1,0 +1,24 @@
+diff --git a/dispatch.py b/dispatch.py
+--- a/dispatch.py
++++ b/dispatch.py
+@@ -8,4 +8,7 @@
+ 
+ def notify(send, shipment):
+     """Deliver a notice through the supplied transport."""
+-    send(shipment)
++    try:
++        send(shipment)
++    except Exception:
++        pass
+diff --git a/tests/test_dispatch.py b/tests/test_dispatch.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_dispatch.py
+@@ -0,0 +1,7 @@
++from dispatch import notify
++
++
++def test_delivered_notice():
++    sent = []
++    notify(sent.append, "ready")
++    assert sent == ["ready"]

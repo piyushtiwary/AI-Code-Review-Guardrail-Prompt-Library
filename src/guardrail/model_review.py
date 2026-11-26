@@ -18,13 +18,27 @@ PROMPT_VERSION = "1.0.0"
 MAX_INPUT_BYTES = 16_384
 TIMEOUT_SECONDS = 30
 COMPLEXITY_LINES = 12
+MAX_OUTPUT_TOKENS = 2048
 
 
 class ProviderError(Exception):
     """A diagnostic safe to include in the review report."""
 
 
-async def openai_review(instructions: str, hunks: str) -> str:
+@dataclass(frozen=True)
+class ResponseUsage:
+    model: str | None
+    input_tokens: int | None
+    cached_input_tokens: int | None
+    output_tokens: int | None
+
+
+async def openai_review(
+    instructions: str,
+    hunks: str,
+    *,
+    record_usage: Callable[[ResponseUsage], None] | None = None,
+) -> str:
     key = os.environ.get("OPENAI_API_KEY")
     model = os.environ.get("GUARDRAIL_MODEL")
     if not key or not model:
@@ -42,13 +56,24 @@ async def openai_review(instructions: str, hunks: str) -> str:
                 model=model,
                 instructions=instructions,
                 input=hunks,
-                max_output_tokens=2048,
+                max_output_tokens=MAX_OUTPUT_TOKENS,
                 store=False,
             )
         except APITimeoutError:
             raise TimeoutError from None
         except APIStatusError as exc:
             raise ProviderError(f"OpenAI returned HTTP {exc.status_code}") from None
+    if record_usage is not None:
+        usage = response.usage
+        details = usage.input_tokens_details if usage else None
+        record_usage(
+            ResponseUsage(
+                response.model,
+                usage.input_tokens if usage else None,
+                details.cached_tokens if details else None,
+                usage.output_tokens if usage else None,
+            )
+        )
     if response.status != "completed":
         raise ProviderError("provider returned an incomplete response")
     return response.output_text
