@@ -96,7 +96,7 @@ flowchart LR
 
 ### Measured benchmark
 
-In the recorded offline run, Guardrail caught **17 of 27 targets (63.0%)** and flagged **0 of 10 clean patches**. Mean review time was **0.232 seconds per patch** with **$0 model cost**. The ten misses were boundary and missing-None defects. Model-assisted measurements await a live run. [Dataset and scoring rules](benchmarks/README.md)
+Across 37 patches, deterministic review caught **17 of 27 targets (63.0%)** and flagged **0 of 10 clean patches**. Adding Codex caught **18 of 27 targets (66.7%)** and flagged **1 of 10 clean patches**. Both modes completed every case. Codex ran on 16 patches with eligible hunks. [Dataset and scoring rules](benchmarks/README.md)
 
 Run `guardrail benchmark score benchmarks/results/run.json` to reproduce the published results. The [benchmark report](benchmarks/results/summary.md) records recall, clean PRs with false alarms, elapsed time, model cost and live-run status.
 
@@ -192,7 +192,7 @@ The action installs Guardrail from the selected action revision. It fetches both
 
 For log-only reviews, omit `comment` and grant only `contents: read`. When commenting is enabled, the CLI prints the report first. If GitHub denies the comment with HTTP 403, the log records the limitation and the review keeps its normal exit status. This supports the default read-only workflow token on fork PRs.
 
-To rehearse the consumer workflow, put it on the consumer's base branch, then open a same-repository PR containing the changes from the defective example against its bundled base. Open the **Guardrail PR review** check and the bot's **Guardrail review** comment. With the default threshold, expect a green job and warnings at lines 1 and 7. Replace the PR's changed files with the clean example and push again. The same comment should update to `No findings.` The local sample PR exercised both revisions and captured the comment before and after the update. [Sample PR summary](docs/sample-pr-summary.md)
+To rehearse the consumer workflow, put it on the consumer's base branch, then open a same-repository PR containing the changes from the defective example against its bundled base. Open the **Guardrail PR review** check and the bot's **Guardrail review** comment. With the default threshold, expect a green job and warnings at lines 1 and 7. Replace the PR's changed files with the clean example and push again. The same comment should update to `No findings.` In the hosted verification PR, a sample handler produced three warnings. Changing the PR to a text-only edit updated the same comment to a clean result. [Hosted PR summary](https://github.com/piyushtiwary/AI-Code-Review-Guardrail-Prompt-Library/pull/1#issuecomment-7185582684)
 
 To publish from a CLI workflow step, set `GITHUB_TOKEN` to `${{ github.token }}` and pass the PR number to `guardrail review`.
 

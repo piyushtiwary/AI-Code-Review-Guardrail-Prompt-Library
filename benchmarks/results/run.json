@@ -1,6 +1,6 @@
 {
   "settings": {
-    "Started (UTC)": "2026-11-25T17:45:26+00:00",
+    "Started (UTC)": "2026-11-26T07:30:14+00:00",
     "Dataset SHA-256": "ab838c081d90a5739eca4ebaee85d07e48b5720af064f6a645f1d5569fefcbec",
     "Runtime": "Windows AMD64, Python 3.12.13",
     "Tool versions": "ai-code-review-guardrail 0.1.0, ruff 0.17.6, bandit 1.9.4",
@@ -9,8 +9,8 @@
     "Findings included": "All severities",
     "Model prompt": "diff-edge-case-review 1.0.0",
     "Model selection": "Flagged Python hunks or at least 12 added code lines",
-    "Request limits": "16384 input bytes, 2048 output tokens, 30s timeout, zero retries",
-    "Provider / requested model": "Awaiting live run"
+    "Request limits": "16384 input bytes, 65536 maximum reply bytes, 120s timeout, one CLI invocation",
+    "Provider / requested model": "Codex CLI / gpt-6-sol (medium reasoning)"
   },
   "rates": {
     "input": null,
@@ -20,7 +20,7 @@
   "deterministic": [
     {
       "id": "case-001",
-      "elapsed_seconds": 0.090005,
+      "elapsed_seconds": 0.140523,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -29,7 +29,7 @@
     },
     {
       "id": "case-002",
-      "elapsed_seconds": 0.117475,
+      "elapsed_seconds": 0.138276,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -38,7 +38,7 @@
     },
     {
       "id": "case-003",
-      "elapsed_seconds": 0.091521,
+      "elapsed_seconds": 0.115376,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -47,7 +47,7 @@
     },
     {
       "id": "case-004",
-      "elapsed_seconds": 0.089902,
+      "elapsed_seconds": 0.105477,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -56,7 +56,7 @@
     },
     {
       "id": "case-005",
-      "elapsed_seconds": 0.09147,
+      "elapsed_seconds": 0.094568,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -65,7 +65,7 @@
     },
     {
       "id": "case-006",
-      "elapsed_seconds": 0.090286,
+      "elapsed_seconds": 0.115477,
       "findings": [
         {
           "check": "test-reference",
@@ -84,7 +84,7 @@
     },
     {
       "id": "case-007",
-      "elapsed_seconds": 0.091528,
+      "elapsed_seconds": 0.108638,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -93,7 +93,7 @@
     },
     {
       "id": "case-008",
-      "elapsed_seconds": 0.109052,
+      "elapsed_seconds": 0.104437,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -102,7 +102,7 @@
     },
     {
       "id": "case-009",
-      "elapsed_seconds": 1.067141,
+      "elapsed_seconds": 1.250619,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -111,7 +111,7 @@
     },
     {
       "id": "case-010",
-      "elapsed_seconds": 0.089989,
+      "elapsed_seconds": 0.116356,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -120,7 +120,7 @@
     },
     {
       "id": "case-011",
-      "elapsed_seconds": 0.092908,
+      "elapsed_seconds": 0.108101,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -129,7 +129,7 @@
     },
     {
       "id": "case-012",
-      "elapsed_seconds": 0.869215,
+      "elapsed_seconds": 0.921834,
       "findings": [
         {
           "check": "exception-handling",
@@ -148,7 +148,7 @@
     },
     {
       "id": "case-013",
-      "elapsed_seconds": 0.283671,
+      "elapsed_seconds": 0.320793,
       "findings": [
         {
           "check": "imports",
@@ -167,7 +167,7 @@
     },
     {
       "id": "case-014",
-      "elapsed_seconds": 0.091897,
+      "elapsed_seconds": 0.123926,
       "findings": [
         {
           "check": "imports",
@@ -186,7 +186,7 @@
     },
     {
       "id": "case-015",
-      "elapsed_seconds": 0.093167,
+      "elapsed_seconds": 0.104603,
       "findings": [
         {
           "check": "test-reference",
@@ -205,7 +205,7 @@
     },
     {
       "id": "case-016",
-      "elapsed_seconds": 0.096713,
+      "elapsed_seconds": 0.166133,
       "findings": [
         {
           "check": "secrets",
@@ -224,7 +224,7 @@
     },
     {
       "id": "case-017",
-      "elapsed_seconds": 0.099933,
+      "elapsed_seconds": 0.158774,
       "findings": [
         {
           "check": "secrets",
@@ -243,7 +243,7 @@
     },
     {
       "id": "case-018",
-      "elapsed_seconds": 0.860776,
+      "elapsed_seconds": 1.079609,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -252,7 +252,7 @@
     },
     {
       "id": "case-019",
-      "elapsed_seconds": 0.092039,
+      "elapsed_seconds": 0.122947,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -261,7 +261,7 @@
     },
     {
       "id": "case-020",
-      "elapsed_seconds": 0.880308,
+      "elapsed_seconds": 0.946237,
       "findings": [
         {
           "check": "exception-handling",
@@ -280,7 +280,7 @@
     },
     {
       "id": "case-021",
-      "elapsed_seconds": 0.093415,
+      "elapsed_seconds": 0.161373,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -289,7 +289,7 @@
     },
     {
       "id": "case-022",
-      "elapsed_seconds": 0.08999,
+      "elapsed_seconds": 0.202495,
       "findings": [
         {
           "check": "imports",
@@ -308,7 +308,7 @@
     },
     {
       "id": "case-023",
-      "elapsed_seconds": 0.098204,
+      "elapsed_seconds": 0.117176,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -317,7 +317,7 @@
     },
     {
       "id": "case-024",
-      "elapsed_seconds": 0.09362,
+      "elapsed_seconds": 0.105575,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -326,7 +326,7 @@
     },
     {
       "id": "case-025",
-      "elapsed_seconds": 0.091044,
+      "elapsed_seconds": 0.109349,
       "findings": [
         {
           "check": "secrets",
@@ -345,7 +345,7 @@
     },
     {
       "id": "case-026",
-      "elapsed_seconds": 0.088456,
+      "elapsed_seconds": 0.116091,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -354,7 +354,7 @@
     },
     {
       "id": "case-027",
-      "elapsed_seconds": 0.871994,
+      "elapsed_seconds": 0.961127,
       "findings": [
         {
           "check": "exception-handling",
@@ -373,7 +373,7 @@
     },
     {
       "id": "case-028",
-      "elapsed_seconds": 0.089497,
+      "elapsed_seconds": 0.087126,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -382,7 +382,7 @@
     },
     {
       "id": "case-029",
-      "elapsed_seconds": 0.094762,
+      "elapsed_seconds": 0.139703,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -391,7 +391,7 @@
     },
     {
       "id": "case-030",
-      "elapsed_seconds": 0.835546,
+      "elapsed_seconds": 1.224041,
       "findings": [
         {
           "check": "exception-handling",
@@ -410,7 +410,7 @@
     },
     {
       "id": "case-031",
-      "elapsed_seconds": 0.095583,
+      "elapsed_seconds": 0.121869,
       "findings": [
         {
           "check": "test-reference",
@@ -429,7 +429,7 @@
     },
     {
       "id": "case-032",
-      "elapsed_seconds": 0.099438,
+      "elapsed_seconds": 0.129611,
       "findings": [
         {
           "check": "secrets",
@@ -448,7 +448,7 @@
     },
     {
       "id": "case-033",
-      "elapsed_seconds": 0.117636,
+      "elapsed_seconds": 0.11294,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -457,7 +457,7 @@
     },
     {
       "id": "case-034",
-      "elapsed_seconds": 0.120644,
+      "elapsed_seconds": 0.126123,
       "findings": [
         {
           "check": "imports",
@@ -476,7 +476,7 @@
     },
     {
       "id": "case-035",
-      "elapsed_seconds": 0.095167,
+      "elapsed_seconds": 0.107616,
       "findings": [
         {
           "check": "test-reference",
@@ -495,7 +495,7 @@
     },
     {
       "id": "case-036",
-      "elapsed_seconds": 0.10956,
+      "elapsed_seconds": 0.15242,
       "findings": [],
       "incomplete": null,
       "model_status": null,
@@ -504,7 +504,7 @@
     },
     {
       "id": "case-037",
-      "elapsed_seconds": 0.110068,
+      "elapsed_seconds": 0.117031,
       "findings": [
         {
           "check": "no-test-changes",
@@ -522,5 +522,691 @@
       "usage": null
     }
   ],
-  "model_assisted": null
+  "model_assisted": [
+    {
+      "id": "case-001",
+      "elapsed_seconds": 0.120361,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-002",
+      "elapsed_seconds": 0.127625,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-003",
+      "elapsed_seconds": 0.113242,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-004",
+      "elapsed_seconds": 11.518727,
+      "findings": [
+        {
+          "check": "diff-edge-case-review",
+          "file": "dispatch.py",
+          "line": 16,
+          "severity": "blocking",
+          "message": "Calling route_summary([]) uses the declared default depot=None, then raises AttributeError at depot.strip() instead of returning a summary for the central depot.",
+          "suggestion": "Handle None before calling strip().",
+          "category": "missing-none-handling"
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10917,
+        "cached_input_tokens": 8576,
+        "output_tokens": 392
+      }
+    },
+    {
+      "id": "case-005",
+      "elapsed_seconds": 8.341412,
+      "findings": [
+        {
+          "check": "diff-edge-case-review",
+          "file": "dispatch.py",
+          "line": 21,
+          "severity": "warning",
+          "message": "For prefix='pkg' and first=last=1, range(first, last) is empty, so the function returns [] instead of ['pkg-1']. The inclusive endpoint requires range(first, last + 1).",
+          "suggestion": null,
+          "category": "off-by-one"
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10910,
+        "cached_input_tokens": 8576,
+        "output_tokens": 206
+      }
+    },
+    {
+      "id": "case-006",
+      "elapsed_seconds": 12.899419,
+      "findings": [
+        {
+          "check": "test-reference",
+          "file": "booking.py",
+          "line": 8,
+          "severity": "warning",
+          "message": "Reference heuristic found no test reference to 'Booking.fits'.",
+          "suggestion": "Check whether a test exercises this function or method.",
+          "category": null
+        },
+        {
+          "check": "diff-edge-case-review",
+          "file": "booking.py",
+          "line": 9,
+          "severity": "warning",
+          "message": "Booking(-1).fits(0) returns True, treating a negative seat count as a booking that fits. Reject negative seat counts before comparing.",
+          "suggestion": null,
+          "category": "other"
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10828,
+        "cached_input_tokens": 8576,
+        "output_tokens": 393
+      }
+    },
+    {
+      "id": "case-007",
+      "elapsed_seconds": 0.105846,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-008",
+      "elapsed_seconds": 0.107441,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-009",
+      "elapsed_seconds": 1.171987,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-010",
+      "elapsed_seconds": 0.122522,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-011",
+      "elapsed_seconds": 0.110389,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-012",
+      "elapsed_seconds": 9.908936,
+      "findings": [
+        {
+          "check": "exception-handling",
+          "file": "dispatch.py",
+          "line": 13,
+          "severity": "warning",
+          "message": "Broad exception handler silently passes.",
+          "suggestion": "Catch the expected exceptions or re-raise unexpected errors.",
+          "category": null
+        },
+        {
+          "check": "diff-edge-case-review",
+          "file": "dispatch.py",
+          "line": 13,
+          "severity": "warning",
+          "message": "If send is None, calling it raises TypeError, but this handler suppresses the error and notify returns as though the notice was delivered.",
+          "suggestion": null,
+          "category": "exception-handling"
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10826,
+        "cached_input_tokens": 8576,
+        "output_tokens": 207
+      }
+    },
+    {
+      "id": "case-013",
+      "elapsed_seconds": 6.323751,
+      "findings": [
+        {
+          "check": "imports",
+          "file": "exports.py",
+          "line": 15,
+          "severity": "warning",
+          "message": "Cannot resolve module 'export_zlbi'.",
+          "suggestion": null,
+          "category": null
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10828,
+        "cached_input_tokens": 8576,
+        "output_tokens": 99
+      }
+    },
+    {
+      "id": "case-014",
+      "elapsed_seconds": 5.702044,
+      "findings": [
+        {
+          "check": "imports",
+          "file": "dispatch.py",
+          "line": 16,
+          "severity": "warning",
+          "message": "Relative import goes beyond the top-level package.",
+          "suggestion": null,
+          "category": null
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10845,
+        "cached_input_tokens": 8576,
+        "output_tokens": 50
+      }
+    },
+    {
+      "id": "case-015",
+      "elapsed_seconds": 12.340087,
+      "findings": [
+        {
+          "check": "test-reference",
+          "file": "catalog.py",
+          "line": 14,
+          "severity": "warning",
+          "message": "Reference heuristic found no test reference to 'currency_code'.",
+          "suggestion": "Check whether a test exercises this function or method.",
+          "category": null
+        },
+        {
+          "check": "diff-edge-case-review",
+          "file": "catalog.py",
+          "line": 15,
+          "severity": "warning",
+          "message": "For `record = {\"currency\": None}`, `dict.get` returns `None` instead of `DEFAULT_CURRENCY`. If `None` represents a missing currency, this returns no currency code.",
+          "suggestion": "Use `record.get(\"currency\") or DEFAULT_CURRENCY` if empty currency values should also use the default.",
+          "category": "missing-none-handling"
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10828,
+        "cached_input_tokens": 8576,
+        "output_tokens": 427
+      }
+    },
+    {
+      "id": "case-016",
+      "elapsed_seconds": 0.179458,
+      "findings": [
+        {
+          "check": "secrets",
+          "file": "transport.env",
+          "line": 1,
+          "severity": "blocking",
+          "message": "Added line contains a likely hard-coded credential.",
+          "suggestion": "Remove the value, rotate the credential, and load it from a secret store.",
+          "category": null
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-017",
+      "elapsed_seconds": 0.125994,
+      "findings": [
+        {
+          "check": "secrets",
+          "file": "pricing.env",
+          "line": 1,
+          "severity": "blocking",
+          "message": "Added line contains a likely hard-coded credential.",
+          "suggestion": "Remove the value, rotate the credential, and load it from a secret store.",
+          "category": null
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-018",
+      "elapsed_seconds": 1.057684,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-019",
+      "elapsed_seconds": 0.140999,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-020",
+      "elapsed_seconds": 11.518227,
+      "findings": [
+        {
+          "check": "exception-handling",
+          "file": "catalog.py",
+          "line": 13,
+          "severity": "warning",
+          "message": "Broad exception handler may discard unexpected errors.",
+          "suggestion": "Catch the expected exceptions or re-raise unexpected errors.",
+          "category": null
+        },
+        {
+          "check": "diff-edge-case-review",
+          "file": "catalog.py",
+          "line": 14,
+          "severity": "warning",
+          "message": "For a record with no `cents` key, this returns 0, making a missing price appear to be a valid free price. The previous code raised `KeyError`, so callers could distinguish missing data from a zero price.",
+          "suggestion": null,
+          "category": "other"
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10834,
+        "cached_input_tokens": 8576,
+        "output_tokens": 329
+      }
+    },
+    {
+      "id": "case-021",
+      "elapsed_seconds": 0.133715,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-022",
+      "elapsed_seconds": 6.348792,
+      "findings": [
+        {
+          "check": "imports",
+          "file": "tests/test_booking.py",
+          "line": 3,
+          "severity": "warning",
+          "message": "Local module 'booking' has no name 'available_seats'.",
+          "suggestion": null,
+          "category": null
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10828,
+        "cached_input_tokens": 8576,
+        "output_tokens": 61
+      }
+    },
+    {
+      "id": "case-023",
+      "elapsed_seconds": 0.241637,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-024",
+      "elapsed_seconds": 0.116129,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-025",
+      "elapsed_seconds": 0.10882,
+      "findings": [
+        {
+          "check": "secrets",
+          "file": "worker.env",
+          "line": 1,
+          "severity": "blocking",
+          "message": "Added line contains a likely hard-coded credential.",
+          "suggestion": "Remove the value, rotate the credential, and load it from a secret store.",
+          "category": null
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-026",
+      "elapsed_seconds": 0.123765,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-027",
+      "elapsed_seconds": 8.136001,
+      "findings": [
+        {
+          "check": "exception-handling",
+          "file": "booking.py",
+          "line": 22,
+          "severity": "warning",
+          "message": "Bare except also catches interrupts and process exits.",
+          "suggestion": "Catch the expected exceptions or re-raise unexpected errors.",
+          "category": null
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10848,
+        "cached_input_tokens": 8576,
+        "output_tokens": 116
+      }
+    },
+    {
+      "id": "case-028",
+      "elapsed_seconds": 0.121422,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-029",
+      "elapsed_seconds": 16.391153,
+      "findings": [
+        {
+          "check": "diff-edge-case-review",
+          "file": "dispatch.py",
+          "line": 20,
+          "severity": "warning",
+          "message": "For stops=[{\"code\": \"A\"}], a missing cancelled field raises KeyError instead of including the stop in active. Treat a missing cancellation flag as false if it is optional.",
+          "suggestion": null,
+          "category": "other"
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10923,
+        "cached_input_tokens": 8576,
+        "output_tokens": 602
+      }
+    },
+    {
+      "id": "case-030",
+      "elapsed_seconds": 10.517867,
+      "findings": [
+        {
+          "check": "exception-handling",
+          "file": "exports.py",
+          "line": 13,
+          "severity": "warning",
+          "message": "Broad exception handler silently continues.",
+          "suggestion": "Catch the expected exceptions or re-raise unexpected errors.",
+          "category": null
+        },
+        {
+          "check": "diff-edge-case-review",
+          "file": "exports.py",
+          "line": 13,
+          "severity": "warning",
+          "message": "If write(row) raises an exception, such as an OSError when the sink is full, export_rows silently skips that row and returns as though the export succeeded. The output is incomplete with no indication of the failure.",
+          "suggestion": null,
+          "category": "exception-handling"
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10826,
+        "cached_input_tokens": 8576,
+        "output_tokens": 211
+      }
+    },
+    {
+      "id": "case-031",
+      "elapsed_seconds": 10.654046,
+      "findings": [
+        {
+          "check": "test-reference",
+          "file": "dispatch.py",
+          "line": 14,
+          "severity": "warning",
+          "message": "Reference heuristic found no test reference to 'is_local'.",
+          "suggestion": "Check whether a test exercises this function or method.",
+          "category": null
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10825,
+        "cached_input_tokens": 8576,
+        "output_tokens": 43
+      }
+    },
+    {
+      "id": "case-032",
+      "elapsed_seconds": 0.138628,
+      "findings": [
+        {
+          "check": "secrets",
+          "file": "sink.env",
+          "line": 1,
+          "severity": "blocking",
+          "message": "Added line contains a likely hard-coded credential.",
+          "suggestion": "Remove the value, rotate the credential, and load it from a secret store.",
+          "category": null
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-033",
+      "elapsed_seconds": 0.10463,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-034",
+      "elapsed_seconds": 19.762794,
+      "findings": [
+        {
+          "check": "imports",
+          "file": "catalog.py",
+          "line": 16,
+          "severity": "warning",
+          "message": "Local module 'currencies' has no name 'LOCAL_CURRENCY'.",
+          "suggestion": null,
+          "category": null
+        },
+        {
+          "check": "diff-edge-case-review",
+          "file": "catalog.py",
+          "line": 18,
+          "severity": "warning",
+          "message": "With local=True and record={'currency': None}, this returns None instead of LOCAL_CURRENCY because dict.get uses the default only when the key is absent.",
+          "suggestion": null,
+          "category": "missing-none-handling"
+        },
+        {
+          "check": "diff-edge-case-review",
+          "file": "catalog.py",
+          "line": 19,
+          "severity": "warning",
+          "message": "With record={'currency': None}, this returns None instead of DEFAULT_CURRENCY because dict.get uses the default only when the key is absent.",
+          "suggestion": null,
+          "category": "missing-none-handling"
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10855,
+        "cached_input_tokens": 8576,
+        "output_tokens": 775
+      }
+    },
+    {
+      "id": "case-035",
+      "elapsed_seconds": 5.437198,
+      "findings": [
+        {
+          "check": "test-reference",
+          "file": "exports.py",
+          "line": 14,
+          "severity": "warning",
+          "message": "Reference heuristic found no test reference to 'flush_rows'.",
+          "suggestion": "Check whether a test exercises this function or method.",
+          "category": null
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10816,
+        "cached_input_tokens": 8576,
+        "output_tokens": 36
+      }
+    },
+    {
+      "id": "case-036",
+      "elapsed_seconds": 0.146231,
+      "findings": [],
+      "incomplete": null,
+      "model_status": "Model review skipped: no eligible Python hunks.",
+      "requested": false,
+      "usage": null
+    },
+    {
+      "id": "case-037",
+      "elapsed_seconds": 14.491144,
+      "findings": [
+        {
+          "check": "no-test-changes",
+          "file": "booking.py",
+          "line": 16,
+          "severity": "warning",
+          "message": "Python logic changed without a test-file change.",
+          "suggestion": "Check whether the changed behavior needs a test update.",
+          "category": null
+        },
+        {
+          "check": "diff-edge-case-review",
+          "file": "booking.py",
+          "line": 18,
+          "severity": "warning",
+          "message": "For override=-1, this returns 0 instead of the supplied override. The function’s documented behavior is to use the override whenever it is not None.",
+          "suggestion": null,
+          "category": "other"
+        }
+      ],
+      "incomplete": null,
+      "model_status": "Model review complete: 1 hunk(s) reviewed.",
+      "requested": true,
+      "usage": {
+        "model": null,
+        "input_tokens": 10835,
+        "cached_input_tokens": 0,
+        "output_tokens": 535
+      }
+    }
+  ]
 }
